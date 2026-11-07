@@ -78,7 +78,7 @@ script wherever the toolchain lives — directly inside the container
   services (dev/runtime targets, override file)
 
 The quality loop stays hermetic when the suite is offline-by-default —
-see [testing-structure](../../dev-discipline/testing-structure/SKILL.md)
+see [testing-structure](../../../dev-discipline/testing-structure/SKILL.md)
 for the suite-side of that contract.
 - [ci-bypass.md](references/ci-bypass.md) — CI parity via the DIRECT bypass
 

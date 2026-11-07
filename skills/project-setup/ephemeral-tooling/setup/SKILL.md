@@ -17,7 +17,7 @@ apply.
    downstream dispatches on them. If the repo runs services too,
    also read [multi-service.md](../model/references/multi-service.md). If
    it has tests, read
-   [testing-structure](../../dev-discipline/testing-structure/SKILL.md)
+   [testing-structure](../../../dev-discipline/testing-structure/SKILL.md)
    before writing the suite — and if it consumes external APIs, its
    catalog-and-recorder reference too.
 2. **Containerfile**: bake the full toolchain for those commands. Complete
@@ -39,7 +39,7 @@ apply.
    the model; real logic in a script the wrapper executes in-container.
 7. **AGENTS.md + docs/**: per agent-docs, including `docs/environment.md`
    describing this repo's container specifics and `docs/development.md`
-   seeded from [development-policy](../../dev-discipline/development-policy/SKILL.md).
+   seeded from [development-policy](../../../dev-discipline/development-policy/SKILL.md).
    If task tracking is wanted, install the canonical workflow doc.
 8. **README**: per readme-shape, variant by repo kind.
 9. **`.gitignore`**: local scratch, `.beads/` if task tracking, nothing

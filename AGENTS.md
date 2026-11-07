@@ -17,10 +17,12 @@ are coding agents pointed at this repo by path.
   example, or a certain recurrence. No speculation.
 - Categories: `foundations` (how a repo is structured and documented),
   `dev-discipline` (how code is written and tested), `agent-workflow` (how
-  agents work together), and one directory per domain (reference + flows,
-  like `ephemeral-tooling`). A category groups knowledge that references
-  itself. A new category needs at least two mutually-referencing skills;
-  a lone skill is a candidate, not a category.
+  agents work together), and `project-setup` (models a repo can be
+  initialized or migrated into, one directory per model: reference +
+  flows, like `ephemeral-tooling`). A category groups knowledge that
+  references itself, or parallel alternatives of one concern. A new
+  category needs at least two mutually-referencing skills; a lone skill is
+  a candidate, not a category.
 - Leaf names are globally unique. Generic leaf names (`model`, `setup`,
   `migrate`) are allowed only inside a domain, and their frontmatter name
   carries the domain prefix (`ephemeral-tooling-setup`).
@@ -42,6 +44,6 @@ are coding agents pointed at this repo by path.
   discipline, seeded into repos as docs/development.md
 - `skills/agent-workflow/agent-orchestration` — dispatching, disciplining
   and verifying parallel agents and nested CLI sessions
-- `skills/ephemeral-tooling/model` — the ephemeral tooling-container model
-- `skills/ephemeral-tooling/setup` — flow: new repo into the model
-- `skills/ephemeral-tooling/migrate` — flow: existing repo into the model
+- `skills/project-setup/ephemeral-tooling/model` — the ephemeral tooling-container model
+- `skills/project-setup/ephemeral-tooling/setup` — flow: new repo into the model
+- `skills/project-setup/ephemeral-tooling/migrate` — flow: existing repo into the model

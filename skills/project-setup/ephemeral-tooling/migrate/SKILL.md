@@ -28,7 +28,7 @@ the parity gate passes.
      need?
    - Tests: do any depend on network or live services? The target state is
      offline-by-default with live layers opt-in — apply
-     [testing-structure](../../dev-discipline/testing-structure/SKILL.md)
+     [testing-structure](../../../dev-discipline/testing-structure/SKILL.md)
      when migrating the suite.
    - CI: how does it run today? Wire the DIRECT bypass
      ([ci-bypass.md](../model/references/ci-bypass.md)) if recipes must run

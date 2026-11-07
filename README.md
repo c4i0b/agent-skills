@@ -23,7 +23,7 @@ skills/
     development-policy/      # test-first discipline, seeded into repos
   agent-workflow/            # how agents work together (not about repos)
     agent-orchestration/     # dispatch, discipline, verify-after-delegate
-  ephemeral-tooling/         # one domain: everything about the container model
+  project-setup/ephemeral-tooling/ # one domain: everything about the container model
     model/                   # the reference (+ references/)
     setup/                   # flow: greenfield repo in the model
     migrate/                 # flow: existing repo into the model
@@ -38,7 +38,7 @@ frontmatter, plus optional bundled files). To use one, tell the agent
 something like:
 
 ```
-Read /home/caio/Projects/agent-skills/skills/ephemeral-tooling/setup/SKILL.md
+Read /home/caio/Projects/agent-skills/skills/project-setup/ephemeral-tooling/setup/SKILL.md
 and follow it to set up this repo.
 ```
 

@@ -332,7 +332,8 @@ def build_pr_body(root: Path, base: str, rewrites: list[tuple],
                   *(f"| {w} | {o} | {t} |" for w, o, t in rows), ""]
     review = [x for x in findings if " -> " not in x]
     if review:
-        lines += ["### Needs review", *(f"- {x}" for x in review), ""]
+        lines += ["### Not bumped (manual decision needed)",
+                  *(f"- {x}" for x in review), ""]
     if not rows:
         lines.append(git(root, "diff", "--stat", base).stdout + "")
     lines += sections

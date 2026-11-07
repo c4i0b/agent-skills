@@ -71,7 +71,9 @@ Lean, single table: one-line summary (`Updates 3 dependencies, 1 major
 and 1 image tag.`), then `| What | From | To |` rows — majors first
 with ⚠️ and bold on the new version, then the rest, then image tags.
 Review-only findings (untracked images, codenames, version-in-repo-name)
-go under `### Needs review`; manifest diffs (small) append verbatim;
+go under `### Not bumped (manual decision needed)` — informational:
+the auto-merge never waits on them, they list what this bump
+deliberately left alone; manifest diffs (small) append verbatim;
 lockfiles never paste, they summarize from the version diff. Zero counts
 and minor/patch types are omitted — major is the only classification
 that changes how a human reviews.

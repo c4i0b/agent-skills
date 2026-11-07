@@ -7,6 +7,10 @@ the findings below are the durable part).
 
 ## Decision rules
 
+0. Freshness check (quick, before using): verify the image/tag still exists
+   and is the current major (e.g. `podman manifest inspect`, release notes).
+   Use the latest stable. If a newer base than this doc's tables exists,
+   prefer it and send a one-line update to this file.
 1. Two different questions: a **tooling** base (shell + package manager to
    bake the toolchain) vs a **runtime** base (ships an artifact). The
    distroless family is runtime-only — no shell, no package manager.

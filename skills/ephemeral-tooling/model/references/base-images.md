@@ -14,9 +14,11 @@ the findings below are the durable part).
 1. Two different questions: a **tooling** base (shell + package manager to
    bake the toolchain) vs a **runtime** base (ships an artifact). The
    distroless family is runtime-only — no shell, no package manager.
-2. Pin for reproducibility: official images by stable/major tag, never a
-   moving `latest` in FROM. Chainguard free tier serves ONLY
-   `latest`/`latest-dev` — pin by **digest** or builds drift. For exact
+2. Tag policy: **default to `latest`** (always current, zero staleness).
+   Pin a major tag only when reproducibility demands it — and then verify
+   it IS the current major (`podman manifest inspect`), use the newest, and
+   update the Freshness list below. Chainguard free tier serves only
+   `latest`/`latest-dev` anyway (digest-pin when repeating). For exact
    toolchain pinning nothing beat nix (`-I nixpkgs=<rev>`): byte-identical
    store paths across fresh containers.
 3. glibc vs musl decides more than size: manylinux wheels and prebuilt
@@ -30,15 +32,15 @@ the findings below are the durable part).
    (`library/rockylinux` is stale at 9.3); CentOS Stream tags are `stream10`
    not `centos-stream10`.
 
-## Freshness (checked Nov 2026 — ALWAYS use these, not older tested tags)
+## Freshness (checked Nov 2026 — keep this list at the latest major)
 
-Current majors: Debian stable = **trixie** (13, glibc 2.41; bookworm =
-oldstable) · Alpine = **3.24** · Node LTS = **26** (`node:26-alpine`) ·
-Python = **3.15** · Go = **1.27** · Rust = **1.99** · `ubi10` and
-distroless **debian13** alongside the -9/-debian12 rows below. The tables
-reference the tags we tested — substitute the CURRENT major listed here
-when using them (python-3.15, not python-3.13; alpine 3.24, not 3.22), and
-update this file when a newer major lands.
+Policy: **use `latest` tags**; if you pin a major instead, it must be the
+CURRENT one below — if it is not listed or is outdated, use `latest`, then
+update this list with the new major. Current majors: Debian stable =
+**trixie** (13, glibc 2.41) · Alpine = **3.24** · Node LTS = **26** ·
+Python = **3.15** · Go = **1.27** · Rust = **1.99** · `ubi10` /
+distroless **debian13** alongside the -9/-debian12 rows below. Tables
+reference tested tags — sizes stay indicative across minors.
 
 ## Tooling bases — general
 

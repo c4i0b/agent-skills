@@ -6,7 +6,10 @@ are coding agents pointed at this repo by path.
 ## Maintenance rules (this repo's golden rules)
 
 Vocabulary is canonical in [GLOSSARY.md](GLOSSARY.md); use those terms
-verbatim instead of paraphrasing.
+verbatim instead of paraphrasing. Rejected concepts and their strip
+conditions live in [DECISIONS.md](DECISIONS.md) — read it before proposing
+to change rules or structure: relitigating needs a NEW observed failure,
+not a better argument.
 
 - A skill is either a **reference** (holds knowledge) or a **flow**
   (orchestrates readings, holds no knowledge of its own). Never mix.
@@ -32,6 +35,10 @@ verbatim instead of paraphrasing.
 - Leaf names are globally unique. Generic leaf names (`model`, `setup`,
   `migrate`) are allowed only inside a domain, and their frontmatter name
   carries the domain prefix (`ephemeral-tooling-setup`).
+- Adding, renaming or moving a skill updates BOTH inventories: the README
+  layout block and the Structure list below (drift between them is the
+  reading-list-drift anti-pattern at inventory level). New canonical terms
+  go to GLOSSARY; rejected concepts go to DECISIONS.
 - Every commit touching skills runs `tests/links-check.sh`: relative
   markdown links must resolve.
 - Skills are English, evergreen, concise. No session play-by-play.

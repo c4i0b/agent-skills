@@ -28,8 +28,12 @@ the findings below are the durable part).
 4. **Use the minimal image that covers the need**: start from the smallest
    base that can bake your toolchain (see tables) and install exactly what
    is missing (`apk`/`apt` at build time — layer cache makes rebuilds
-   cheap). Step up to a fatter per-language image only when composing is
-   demonstrably not worth it; never start big "to be safe".
+   cheap). **Balance check**: if what you must install approaches the
+   prebuilt per-language image's delta, the minimal base stops paying —
+   take the prebuilt (see the Rust row: 1.08 GB composed vs 1.10 GB
+   prebuilt → prebuilt wins; Python row: 85 MB composed vs 667 MB prebuilt
+   → composed wins). Judge on final size, install complexity and who owns
+   the package list; never start big "to be safe".
 5. Registry quirks: `quay.io/redhatubi` and `quay.io/almalinux` refuse
    anonymous pulls; Rocky 10 lives at `docker.io/rockylinux/rockylinux:10`
    (`library/rockylinux` is stale at 9.3); CentOS Stream tags are `stream10`

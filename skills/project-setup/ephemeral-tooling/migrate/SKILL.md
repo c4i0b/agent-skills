@@ -10,10 +10,9 @@ single reading list for both flows; skip the conditionals that do not
 apply.
 
 Work on a branch off an updated main. **Audit first, apply by tier** (the
-validated adoption pattern, converging from agent-starter, project-continuity
-and OpenAI's migrate skill): stage 1 is READ-ONLY (inventory + gap report,
-invent nothing); stage 2 applies only approved tiers, never overwriting
-existing files without explicit confirmation.
+validated adoption pattern: read-only inventory and gap report first, then
+approved tiers only, never overwriting existing files without explicit
+confirmation):
 
 ## Flow
 

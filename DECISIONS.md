@@ -2,9 +2,9 @@
 
 Rejected concepts and the reason each stays rejected. Read before
 proposing a change to rules or structure: relitigating a recorded decision
-needs a NEW observed failure, not a better argument (the bar, from
-mattpocock's SCOPE: observed failure plus fits the philosophy). Each entry
-carries its strip condition — the change that would reopen it.
+needs a NEW observed failure, not a better argument (the bar: observed
+failure plus fits the philosophy). Each entry carries its strip
+condition — the change that would reopen it.
 
 - **Generic setup/migrate flows dispatching on model** — flows stay inside
   the model's directory. Generalizing for models that do not exist is
@@ -18,7 +18,8 @@ carries its strip condition — the change that would reopen it.
   (The smoke script once shelled out to one CLI with a pinned model and
   failed on that provider's free tier.) Strip never: tool-agnosticism is
   identity, not preference.
-- **The whole obra/superpowers repo** — overlaps agent-orchestration
+- **Adopting an external process-skill collection wholesale** — overlaps
+  agent-orchestration
   (two sources of truth for dispatch) and its verbosity fights the lean
   rule. Cherry-picks welcome, wholesale adoption no. Revisit if we stop
   maintaining our own orchestration skill.
@@ -39,7 +40,7 @@ carries its strip condition — the change that would reopen it.
   the doc-guided agent decision and adds a build surface to maintain.
   Revisit if scaffolds drift repeatedly despite the gate (that would be
   the red).
-- **Machine-readable `catalog.yaml` inventory** (docker/skills style) —
+- **Machine-readable `catalog.yaml` inventory** —
   the AGENTS.md structure list already serves as the single inventory;
   generated manifests pay off at distribution scale. Revisit when (if)
   publishing or bundling skills.

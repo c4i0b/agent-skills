@@ -1,8 +1,9 @@
 # Execution protocol
 
 How an agent executes a plan or task graph once planning is done. Adapted
-from the pattern validated by obra's subagent-driven-development, reshaped
-for how this repo's orchestration already works.
+from a validated external pattern (subagent-per-task with rulings and
+stop conditions), reshaped for how this repo's orchestration already
+works.
 
 ## Continuous execution
 

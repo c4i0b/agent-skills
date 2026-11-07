@@ -35,6 +35,9 @@ verbatim instead of paraphrasing.
 - Every commit touching skills runs `tests/links-check.sh`: relative
   markdown links must resolve.
 - Skills are English, evergreen, concise. No session play-by-play.
+- Skills name mechanisms, not external projects: describe the pattern so
+  the rule stands alone (an external repo reference rots and assumes
+  context the reader does not have).
 
 ## Structure
 

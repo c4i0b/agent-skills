@@ -21,9 +21,9 @@ Read first, in order:
    also read [multi-service.md](../model/references/multi-service.md).
 2. **Containerfile**: bake the full toolchain for those commands. Complete
    on day one — no "install later". Base image: the stack's OFFICIAL image,
-   pinned to the current stable major tag (never a moving `latest`, never
-   an EOL minor), preferring the slim glibc variant unless musl is a
-   deliberate choice.
+   `latest` tag by default (see [base-images.md](../model/references/base-images.md)
+   tag policy); prefer the slim glibc variant unless musl is a deliberate
+   choice.
 3. **compose.yml**: the `tooling` service per the model (user 0:0, `:z`
    mount, ephemeral HOME).
 4. **justfile**: `runner` prefix, `image`, `shell`, and one recipe per

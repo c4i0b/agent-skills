@@ -23,10 +23,11 @@ skills/
     development-policy/      # test-first discipline, seeded into repos
   agent-workflow/            # how agents work together (not about repos)
     agent-orchestration/     # dispatch, discipline, verify-after-delegate
-  project-setup/ephemeral-tooling/ # one domain: everything about the container model
-    model/                   # the reference (+ references/)
-    setup/                   # flow: greenfield repo in the model
-    migrate/                 # flow: existing repo into the model
+  project-setup/             # models a repo can be initialized/migrated into
+    ephemeral-tooling/       # the container model (reference + flows)
+      model/                 # the reference (+ references/)
+      setup/                 # flow: greenfield repo in the model
+      migrate/               # flow: existing repo into the model
 ```
 
 Rules that keep this repo healthy live in [AGENTS.md](AGENTS.md).

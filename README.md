@@ -14,19 +14,19 @@ Validated against three real repos:
 
 ```
 skills/
-  repo-foundations/           # transversal: any repo benefits
-    agent-docs/               # lean AGENTS.md ⇄ docs/ (+ references/)
-    readme-shape/             # README for humans (+ references/ per repo kind)
-    testing-structure/        # pyramid, cheapest-first, recorded fixtures
-    agent-orchestration/      # parallel subagents, nested CLI sessions,
-                              # verify-after-delegate, research campaigns
-    writing-style/            # the prose voice for repo artifacts
-    development-policy/       # test-first, cheapest layer, refactor for
-                              # testability: seeded as docs/development.md
-  ephemeral-tooling/          # one domain: everything about the container model
-    model/                    # the reference (+ references/)
-    setup/                    # flow: greenfield repo in the model
-    migrate/                  # flow: existing repo into the model
+  foundations/               # how a repo is structured and documented
+    agent-docs/              # lean AGENTS.md ⇄ docs/ (+ references/)
+    readme-shape/            # README for humans (+ references/ per repo kind)
+    writing-style/           # the prose voice for repo artifacts
+  dev-discipline/            # how code is written and tested
+    testing-structure/       # pyramid, cheapest-first, recorded fixtures
+    development-policy/      # test-first discipline, seeded into repos
+  agent-workflow/            # how agents work together (not about repos)
+    agent-orchestration/     # dispatch, discipline, verify-after-delegate
+  ephemeral-tooling/         # one domain: everything about the container model
+    model/                   # the reference (+ references/)
+    setup/                   # flow: greenfield repo in the model
+    migrate/                 # flow: existing repo into the model
 ```
 
 Rules that keep this repo healthy live in [AGENTS.md](AGENTS.md).

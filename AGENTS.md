@@ -15,27 +15,33 @@ are coding agents pointed at this repo by path.
   commit once shipped).
 - A new variant, reference file or skill ships only with a real validated
   example, or a certain recurrence. No speculation.
-- A category directory groups knowledge that references itself
-  (`ephemeral-tooling/`). Transversal knowledge that multiple categories
-  consume lives in `repo-foundations/`. Nothing else gets a category.
-- Frontmatter `name` is globally unique and uses the category as prefix
-  (`ephemeral-tooling-setup`), even though discovery walks directories.
+- Categories: `foundations` (how a repo is structured and documented),
+  `dev-discipline` (how code is written and tested), `agent-workflow` (how
+  agents work together), and one directory per domain (reference + flows,
+  like `ephemeral-tooling`). A category groups knowledge that references
+  itself. A new category needs at least two mutually-referencing skills;
+  a lone skill is a candidate, not a category.
+- Leaf names are globally unique. Generic leaf names (`model`, `setup`,
+  `migrate`) are allowed only inside a domain, and their frontmatter name
+  carries the domain prefix (`ephemeral-tooling-setup`).
+- Every commit touching skills runs `tests/links-check.sh`: relative
+  markdown links must resolve.
 - Skills are English, evergreen, concise. No session play-by-play.
 
 ## Structure
 
-- `skills/repo-foundations/agent-docs` — lean AGENTS.md + docs/ system,
+- `skills/foundations/agent-docs` — lean AGENTS.md + docs/ system,
   decision records, optional task tracking
-- `skills/repo-foundations/readme-shape` — README conventions per repo kind
-- `skills/repo-foundations/testing-structure` — test pyramid without
+- `skills/foundations/readme-shape` — README conventions per repo kind
+- `skills/foundations/writing-style` — the prose voice for AGENTS.md,
+  docs/ and READMEs
+- `skills/dev-discipline/testing-structure` — test pyramid without
   overlap, cheapest-test-first, refactor-for-testability;
   recorded-fixtures catalog/recorder for external-API repos
-- `skills/repo-foundations/agent-orchestration` — dispatching, disciplining
-  and verifying parallel agents and nested CLI sessions
-- `skills/repo-foundations/writing-style` — the prose voice for AGENTS.md,
-  docs/ and READMEs
-- `skills/repo-foundations/development-policy` — day-to-day coding
+- `skills/dev-discipline/development-policy` — day-to-day coding
   discipline, seeded into repos as docs/development.md
+- `skills/agent-workflow/agent-orchestration` — dispatching, disciplining
+  and verifying parallel agents and nested CLI sessions
 - `skills/ephemeral-tooling/model` — the ephemeral tooling-container model
 - `skills/ephemeral-tooling/setup` — flow: new repo into the model
 - `skills/ephemeral-tooling/migrate` — flow: existing repo into the model

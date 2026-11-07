@@ -84,6 +84,13 @@ lockfiles never paste, they summarize from the version diff. Zero counts
 and minor/patch types are omitted — major is the only classification
 that changes how a human reviews.
 
+When action is required (auto-merge fails to arm, or cheap checks
+abort), the warning leads the body — heading, bold WHAT, 1-3 bullets,
+details pointer. The reader grasps the situation in the first third of
+the body without parsing a run-on sentence. The failed-merge warning is
+prepended to the live PR via `gh pr edit`; the failed-checks warning
+goes to the run output (there is no PR to edit — nothing landed).
+
 ## Safety rails
 
 - `--dry-run`: report tags and which updaters would run; mutates nothing.

@@ -379,6 +379,19 @@ def build_pr_body(root: Path, base: str, rewrites: list[tuple],
     return "\n".join(lines)
 
 
+def action_required(what: str, bullets: list[str], details: str) -> str:
+    """Scannable warning: heading, bold WHAT, 1-3 bullets, details
+    pointer. The reader must grasp the situation without parsing a
+    run-on sentence (first third of the body)."""
+    return "\n".join([
+        "## ⚠️ Not merged automatically — action required", "",
+        f"**{what}**", "",
+        *(f"- {b}" for b in bullets),
+        "",
+        f"Details: {details}",
+    ])
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--dry-run", action="store_true",
@@ -427,8 +440,12 @@ def main() -> int:
 
     print("== cheap checks (cheapest-first) ==")
     if not cheap_checks(root):
-        sys.exit("FAIL: cheap checks failed; leaving changes uncommitted "
-                 "for inspection")
+        print(action_required(
+            "Cheap checks failed — this bump did NOT land.",
+            ["the worktree is left dirty for inspection",
+             "nothing was committed or pushed"],
+            "the failing `just lint`/`just test` output above"))
+        sys.exit(1)
 
     branch = f"bump/{datetime.date.today():%Y%m%d}"
     git(root, "checkout", "-B", branch)
@@ -465,8 +482,19 @@ def main() -> int:
                         "--auto", "--squash", "--delete-branch"],
                        cwd=root, text=True)
     if m.returncode != 0:
-        print("NOTE: auto-merge not enabled (enable it in repo settings); "
-              "the PR stays open until CI is green and you merge")
+        warning = action_required(
+            "Auto-merge could not be armed for this bump.",
+            ["branch protection may miss the required CI check, or "
+             "require reviews — the author cannot self-approve",
+             "the PR stays open; merge manually once CI is green"],
+            "the PR checks tab and this run's output")
+        body = subprocess.run(
+            ["gh", "pr", "view", branch, "--json", "body", "--jq", ".body"],
+            capture_output=True, text=True, cwd=root).stdout.strip()
+        subprocess.run(["gh", "pr", "edit", branch, "--body",
+                        warning + ("\n\n" + body if body else "")],
+                       cwd=root)
+        print(warning)
     return 0
 
 

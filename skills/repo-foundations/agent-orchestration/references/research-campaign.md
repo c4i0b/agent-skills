@@ -13,7 +13,8 @@ decision being informed), its CANDIDATE matrix, and the exact TESTS to run
 
 ## Per-agent contract
 
-- Work dir: `/tmp/opencode/<campaign>/<domain>/` (each agent owns its dir).
+- Work dir: a scratch subdirectory per agent, e.g.
+  `/tmp/<scratch-root>/<campaign>/<domain>/` (each agent owns its dir).
 - Deliverable: `report.md` — per candidate: registry+tag, measured facts
   (sizes via `podman images`, versions, libc), test OUTPUTS (snippets),
   verdict (recommended / acceptable / avoid) with caveats.

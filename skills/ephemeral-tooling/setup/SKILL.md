@@ -1,0 +1,48 @@
+---
+name: ephemeral-tooling-setup
+description: Flow to set up a NEW repo directly in the ephemeral tooling model. Read ephemeral-tooling-model, agent-docs and readme-shape first. Covers stack discovery, artifact creation order and the validation gate.
+---
+
+# Setup: new repo in the model
+
+Read first, in order:
+
+1. [ephemeral-tooling-model](../model/SKILL.md) — the model and its
+   invariants
+2. [agent-docs](../../repo-foundations/agent-docs/SKILL.md) — the AGENTS.md
+   ⇄ docs/ system (incl. optional task tracking)
+3. [readme-shape](../../repo-foundations/readme-shape/SKILL.md) — README by
+   repo kind
+
+## Flow
+
+1. **Discover the stack**: language, package manager, and the commands a
+   developer runs (fmt, lint, test, build). If the repo runs services too,
+   also read [multi-service.md](../model/references/multi-service.md).
+2. **Containerfile**: bake the full toolchain for those commands. Complete
+   on day one — no "install later".
+3. **compose.yml**: the `tooling` service per the model (user 0:0, `:z`
+   mount, ephemeral HOME).
+4. **justfile**: `runner` prefix, `image`, `shell`, and one recipe per
+   discovered command (thin dispatchers to scripts under `tools/` or
+   `scripts/`). Check name collisions before adding recipes.
+5. **Git hooks** (if the repo will have hooks): the wrapper pattern from
+   the model; real logic in a script the wrapper executes in-container.
+6. **AGENTS.md + docs/**: per agent-docs, including `docs/environment.md`
+   describing this repo's container specifics. If task tracking is wanted,
+   install the canonical workflow doc.
+7. **README**: per readme-shape, variant by repo kind.
+8. **`.gitignore`**: local scratch, `.beads/` if task tracking, nothing
+   else speculative.
+
+## Validation gate (must pass before handoff)
+
+```sh
+just image                # image builds
+just <check>              # the quality command runs IN THE CONTAINER
+just shell -c 'exit'      # interactive entry works (or equivalent smoke)
+git commit --allow-empty -m x --dry-run   # hooks resolve if present
+```
+
+Hand off with: what was created, the gate output, and what was deliberately
+left out (candidates).

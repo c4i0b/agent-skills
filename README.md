@@ -1,0 +1,48 @@
+# agent-skills
+
+Reusable skills for coding agents: how to initialize and migrate repos to
+the way I work. Skills are consumed by pointing an agent at this repo (see
+Using below).
+
+Validated against two real repos:
+
+- `/home/caio/Projects/fedora-packages` — monorepo, single tooling container
+- `/home/caio/Projects/finance` — service stack, dev/runtime containers
+
+## Layout
+
+```
+skills/
+  repo-foundations/           # transversal: any repo benefits
+    agent-docs/               # lean AGENTS.md ⇄ docs/ (+ references/)
+    readme-shape/             # README for humans (+ references/ per repo kind)
+  ephemeral-tooling/          # one domain: everything about the container model
+    model/                    # the reference (+ references/)
+    setup/                    # flow: greenfield repo in the model
+    migrate/                  # flow: existing repo into the model
+```
+
+Rules that keep this repo healthy live in [AGENTS.md](AGENTS.md).
+
+## Using
+
+Skills are plain Agent Skills (`SKILL.md` with `name` + `description`
+frontmatter, plus optional bundled files). To use one, tell the agent
+something like:
+
+```
+Read /home/caio/Projects/agent-skills/skills/ephemeral-tooling/setup/SKILL.md
+and follow it to set up this repo.
+```
+
+Flows orchestrate readings: they list which reference skills to read and in
+what order. Reference skills hold the knowledge.
+
+## Candidates (not built yet)
+
+Built only when a real validated example exists:
+
+- `readme-shape/references/cli-tool.md`, `library.md`
+- `ephemeral-tooling/model/references/credentials.md`
+- a drift-review flow (does this repo still follow the model?)
+- distribution via `npx skills add` (structure is compatible)

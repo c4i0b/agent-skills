@@ -15,6 +15,12 @@ Why this exists (observed red): an EOL image tag once shipped unnoticed
 (the failure `tests/scaffold-check.sh` now asserts against), and dependency
 age is a certain recurrence in every repo. Renovate-style autoupdate is
 rejected (DECISIONS.md), so the bump surface we own is one stdlib script.
+Field reds from the finance repo: tag drift hidden behind `ARG
+BASE_IMAGE=ref:tag` indirection (the scanner must read ARG lines, not
+just FROM), digest pins parsing the sha hex as a tag, and `uv lock
+--upgrade` rewriting a lockfile's content-hash with zero version moves
+(a changed file is not a bump — gate on version-level changes and
+revert churn, or the flow erodes trust with no-op PRs).
 
 ## Tooling base (validated)
 
@@ -84,4 +90,6 @@ that changes how a human reviews.
 - Failed updater: warning, continue; failed cheap check: abort with the
   worktree dirty for inspection (nothing committed, nothing pushed).
 - Codename and untracked tags are reported for manual review, never
-  rewritten.
+  rewritten (exception: Debian codenames map to the current number,
+  suffix preserved — `bookworm-slim` → `13-slim`).
+- Lockfile churn with zero version moves is reverted, never PRed.

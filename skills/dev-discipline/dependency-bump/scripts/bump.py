@@ -31,6 +31,9 @@ CURRENT = {
     "ubi": "10",
 }
 OK_TAGS = {"latest", "latest-dev", "rawhide"}
+# Debian codenames are canonical style; map to the current number,
+# preserving suffixes (bookworm-slim -> 13-slim, never bare 13)
+DEBIAN_CODENAMES = {"bookworm": "12", "trixie": "13", "bullseye": "11"}
 # Image family by last path segment of the reference.
 FAMILY_ALIASES = {"golang": "golang", "go": "golang"}
 
@@ -48,7 +51,10 @@ UPDATERS = [
 ]
 
 TAG_RE = re.compile(r"(?P<ref>\S+):(?P<tag>[A-Za-z0-9._-]+)")
-TAG_LINE_RE = re.compile(r"^\s*(FROM\s+\S+|image:\s*\S+)")
+# FROM, compose image:, and ARG NAME=ref — ARG indirection is where the
+# real tag usually lives when FROM uses a variable (observed: finance)
+TAG_LINE_RE = re.compile(
+    r"^\s*(FROM\s+\S+|image:\s*\S+|ARG\s+[A-Za-z_]\w*=\S+)")
 
 # Families versioned as major.minor (python, golang, alpine, rust) vs a
 # single major (node, debian, ubi): decides what "current" means.
@@ -132,8 +138,14 @@ def fix_image_tags(root: Path, dry: bool) -> tuple[list[str], list[tuple], bool]
                 continue
             if line.lstrip().startswith("FROM"):
                 bare = line.split()[1]
+            elif line.lstrip().startswith("ARG"):
+                bare = line.split("=", 1)[1].strip().strip("'\"")
             else:  # image: <ref>[:tag]
                 bare = line.split(":", 1)[1].strip().strip("'\"")
+            bare = bare.split("@", 1)[0]  # digest pin: @sha256:hex would
+            #                       otherwise parse the hex as a tag
+            if not bare:
+                continue
             m = TAG_RE.search(bare)
             ref, tag = (m.group("ref"), m.group("tag")) if m else (bare, None)
             if tag is None or tag in OK_TAGS or tag == "dev":
@@ -146,17 +158,28 @@ def fix_image_tags(root: Path, dry: bool) -> tuple[list[str], list[tuple], bool]
                         f"{name}:{i + 1}: {ref} carries major {rn[1]} "
                         f"({rn[0]} current: {cur}) - review by hand")
                 continue
+            codename = next((c for c in DEBIAN_CODENAMES
+                             if family_of(ref) == "debian"
+                             and tag.startswith(c)), None)
+            orig_tag = tag
+            if codename:
+                tag = tag.replace(codename, DEBIAN_CODENAMES[codename], 1)
             family = family_of(ref)
             if family is None or family not in CURRENT:
-                findings.append(f"{name}:{i + 1}: untracked image {ref}:{tag} "
-                                "- check currency by hand (base-images.md)")
+                # report only image-shaped refs: explicit tag or registry
+                # path — plain ARG scalars (VERSION=1.22) are not images
+                if m is not None or "/" in ref:
+                    findings.append(f"{name}:{i + 1}: untracked image "
+                                    f"{ref}:{tag} - check currency by hand "
+                                    "(base-images.md)")
                 continue
             if not is_current(family, tag):
                 new = current_tag(family, tag)
-                findings.append(f"{name}:{i + 1}: {ref}:{tag} -> :{new}")
-                rewrites.append((f"{name}:{i + 1}", ref, tag, new))
+                findings.append(f"{name}:{i + 1}: {ref}:{orig_tag} -> :{new}")
+                rewrites.append((f"{name}:{i + 1}", ref, orig_tag, new))
                 if not dry:
-                    lines[i] = line.replace(f"{ref}:{tag}", f"{ref}:{new}")
+                    lines[i] = line.replace(f"{ref}:{orig_tag}",
+                                            f"{ref}:{new}")
                     changed = True
             elif tag not in (CURRENT[family], f"{CURRENT[family]}-slim",
                              CURRENT[family].split(".")[0]):
@@ -286,6 +309,21 @@ def _pkg_versions(blob: str) -> dict:
         return {}
 
 
+def collect_deps(root: Path, base: str) -> list[tuple[str, str, str]]:
+    """Version-level changes across all lockfiles in the diff — used both
+    to gate (files changed is NOT a bump; uv can rewrite a lockfile's
+    content-hash with zero upgrades, observed in finance) and for the PR
+    body."""
+    deps: list[tuple[str, str, str]] = []
+    for f in git(root, "diff", "--name-only", base).stdout.split():
+        if f == "package-lock.json":
+            deps += summarize_json_lock(root, base, f)
+        elif f.endswith(".lock"):
+            deps += summarize_toml_lock_diff(
+                git(root, "diff", base, "--", f).stdout)
+    return deps
+
+
 def build_pr_body(root: Path, base: str, rewrites: list[tuple],
                   findings: list[str]) -> str:
     """Lean PR body: one-line summary, single from/to table (majors
@@ -302,13 +340,13 @@ def build_pr_body(root: Path, base: str, rewrites: list[tuple],
             deps += [(n, o, n2, bump_type(o, n2)) for n, o, n2 in
                      summarize_json_lock(root, base, f)]
         elif f.endswith(".lock"):
-            d = git(root, "diff", base, "--", f).stdout
-            s = summarize_toml_lock_diff(d)
+            s = summarize_toml_lock_diff(
+                git(root, "diff", base, "--", f).stdout)
             if s:
                 deps += [(n, o, n2, bump_type(o, n2)) for n, o, n2 in s]
             else:
-                sections += [f"### {f}", "- (no version-level summary; "
-                             "see diff)", ""]
+                sections += [f"### {f}", "- no version-level summary; "
+                             "see diff", ""]
 
     n_major = sum(1 for d in deps if d[3] == "major")
     summary = []
@@ -375,6 +413,17 @@ def main() -> int:
     if not (changed or tags_modified):
         print("nothing to bump; done")
         return 0
+    if changed and not tags_modified and not collect_deps(root, base):
+        # a rewritten lockfile with zero version moves is churn, not a
+        # bump (observed: uv lock --upgrade refreshing content-hash) —
+        # a PR for it would be weekly noise; revert instead. Manifest
+        # edits (go.mod ranges) still count: their diff is the summary.
+        touched = git(root, "diff", "--name-only", base).stdout.split()
+        if not any(f in MANIFESTS for f in touched):
+            git(root, "restore", ".")
+            print("lockfile churn only (no version changes); reverted, "
+                  "no PR")
+            return 0
 
     print("== cheap checks (cheapest-first) ==")
     if not cheap_checks(root):

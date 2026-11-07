@@ -72,6 +72,13 @@ script wherever the toolchain lives — directly inside the container
   dedicated service, not the everyday tooling container.
 - The justfile runner prefix executes commands in the container: verify
   each migrated command there, not only that the justfile parses.
+- Vendor images with tool ENTRYPOINTs (Chainguard `-dev`) swallow compose
+  commands: set `entrypoint: []` on the service (observed: cargo ate
+  `compose run` commands).
+- just shebang recipes receive no `$@` unless `set positional-arguments :=
+  true` (observed: arg-based recipes silently ran without arguments).
+- `podman compose run` never EOFs forwarded stdin: stdin-driven runs hang.
+  Take arguments, not stdin (observed: a run recipe hanging forever).
 
 ## References
 

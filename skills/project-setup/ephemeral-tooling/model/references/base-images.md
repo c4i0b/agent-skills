@@ -64,6 +64,11 @@ Alpine = **3.24** · Node LTS = **26** · Python = **3.15** · Go = **1.27**
 | Go | `golang:1.27-alpine` 266 MB: **static builds ideal, CGO fails (no gcc since 1.27)**; prebuilt glibc dies | 240 MB (go+git, go 1.27/gcc 16) | 754 MB: CGO ok | **wolfi+apk**; alpine fine for pure static Go |
 | Rust | `rust:1-alpine` 1.04 GB (musl native) | 1.08 GB: needs explicit `build-base`, no musl-dev; rustup-musl route fights apk cargo | 1.1 GB: cargo ok | **`-dev`**; or `rust:slim-bookworm` + `rustup target add x86_64-unknown-linux-musl` for static musl binaries (runs anywhere) |
 
+Chainguard `-dev` images ship tool ENTRYPOINTs (cargo eats compose
+commands): set `entrypoint: []` on the compose service, or
+`--entrypoint /bin/sh` for direct runs. Default nonroot uid 65532 also
+bites bind mounts (our `user: "0:0"` neutralizes it).
+
 ## Runtime bases
 
 | Artifact | Image | Size | Verdict |

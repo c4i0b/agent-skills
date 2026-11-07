@@ -5,6 +5,15 @@
 # (subagents, nested CLI sessions — see agent-orchestration); this script
 # only checks the result. Rule in AGENTS.md: flow/model changes need a
 # fresh scratch scaffold passing this check before commit.
+#
+# Red-green: every assertion below exists because its red was OBSERVED in
+# a real run. New assertions must cite their red.
+#   no initial commit  -> test 1 scaffold (everything staged, zero commits)
+#   missing artifacts  -> test 1 (docs/ absent from gate)
+#   image naming       -> test 1 (ad-hoc "timew-tooling:local")
+#   non-current FROM   -> test 1 (golang:1.22, EOL minor in 2026)
+#   no test recipe     -> gate gap: quality command was aspirational
+#   build: silent no-op-> qw-gate run (image: without build: builds nothing)
 set -euo pipefail
 
 scratch="${1:?usage: scaffold-check.sh <scratch-dir>}"

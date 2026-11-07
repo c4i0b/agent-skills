@@ -21,8 +21,9 @@ skills/
   dev-discipline/            # how code is written and tested
     testing-structure/       # pyramid, cheapest-first, recorded fixtures
     development-policy/      # test-first discipline, seeded into repos
-  agent-workflow/            # how agents work together (not about repos)
+  agent-workflow/            # how agents work: together and with the user
     agent-orchestration/     # dispatch, discipline, verify-after-delegate
+    planning/                # guided decisions, spec convergence, execution
   project-setup/             # models a repo can be initialized/migrated into
     ephemeral-tooling/       # the container model (reference + flows)
       model/                 # the reference (+ references/)
@@ -50,6 +51,10 @@ what order. Reference skills hold the knowledge.
 
 Built only when a real validated example exists:
 
+- **reliability evals** (multi-run smoke: 3 scaffolds, all green, measuring
+  variance. Trigger: when a flow or model reference changes shape, or when
+  the skill count doubles. The single-run gate covers structure, not
+  reliability)
 - a coding/refactoring skill on **modularity**, seeded by the
   testing-structure rule that code must be refactored to enable cheap
   tests (seams, ports, injection) — validated once in finance; a dedicated

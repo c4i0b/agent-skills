@@ -17,7 +17,10 @@ verbatim instead of paraphrasing.
   repo is unvalidated (that is how an EOL image tag and a missing initial
   commit once shipped).
 - A new variant, reference file or skill ships only with a real validated
-  example, or a certain recurrence. No speculation.
+  example, or a certain recurrence. No speculation. **Red-green**: every
+  rule, gate assertion or invariant ships with its red — the observed
+  failure it exists to prevent, cited where the rule lives. If you cannot
+  name the red, the rule is speculative.
 - Categories: `foundations` (how a repo is structured and documented),
   `dev-discipline` (how code is written and tested), `agent-workflow` (how
   agents work together), and `project-setup` (models a repo can be
@@ -47,6 +50,8 @@ verbatim instead of paraphrasing.
   discipline, seeded into repos as docs/development.md
 - `skills/agent-workflow/agent-orchestration` — dispatching, disciplining
   and verifying parallel agents and nested CLI sessions
+- `skills/agent-workflow/planning` — guided decision elicitation, spec
+  convergence and the execution protocol (rulings, four stops)
 - `skills/project-setup/ephemeral-tooling/model` — the ephemeral tooling-container model
 - `skills/project-setup/ephemeral-tooling/setup` — flow: new repo into the model
 - `skills/project-setup/ephemeral-tooling/migrate` — flow: existing repo into the model

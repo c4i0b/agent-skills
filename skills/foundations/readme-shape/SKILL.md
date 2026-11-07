@@ -31,7 +31,10 @@ state, no shape.)
 Follow [writing-style](../writing-style/SKILL.md) — English only, no em
 dashes, no semicolons, short paragraphs and bullets. README-specific:
 machine-generated regions (delimited by markers) are never hand-edited and
-must not bury the first screen.
+must not bury the first screen. **Directories, not files**: explain
+structure with directories and their purpose; a README is not a file
+index — link docs/ for detail. Cite a file only when the file itself is
+the usage (a command, an entry point).
 
 ## Variants
 

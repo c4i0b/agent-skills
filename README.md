@@ -29,12 +29,11 @@ Rules that keep this repo healthy live in [AGENTS.md](AGENTS.md).
 
 ## Using
 
-Skills are plain Agent Skills (`SKILL.md` with `name` + `description`
-frontmatter, plus optional bundled files). To use one, tell the agent
-something like:
+Each skill is a directory with a `SKILL.md` the agent will find. To use
+one, point the agent at it:
 
 ```
-Read <path-to>/agent-skills/skills/project-setup/ephemeral-tooling/setup/SKILL.md
+Read <path-to>/agent-skills/skills/project-setup/ephemeral-tooling/setup/
 and follow it to set up this repo.
 ```
 
@@ -53,7 +52,7 @@ Built only when a real validated example exists:
   testing-structure rule that code must be refactored to enable cheap
   tests (seams, ports, injection) — validated once in finance; a dedicated
   skill waits for a second real use
-- `readme-shape/references/cli-tool.md`, `library.md`
-- `ephemeral-tooling/model/references/credentials.md`
+- readme-shape variants for CLI tools and libraries
+- a credentials reference for the ephemeral-tooling model
 - a drift-review flow (does this repo still follow the model?)
 - distribution via `npx skills add` (structure is compatible)

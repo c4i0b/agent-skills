@@ -35,6 +35,14 @@ tooling (a spec repo needs none of this).
    CI. Real API/endpoint is a rare opt-in layer: dedicated marker (e.g.
    `@pytest.mark.live`), deselected by default via config, one smoke per
    endpoint, never in CI.
+   - **capability-probe skip** (anti-pattern): a test needing an external
+     binary that silently self-degrades when it is absent (`if
+     !tool_exists() { return; }`, or a stub fallback inside the code
+     under test). Red: a suite of 287 green while its validation path
+     was never exercised; every such test guarded on the missing binary
+     except one, and that one caught the bug. A missing binary at test
+     time means exactly one of two things: Containerfile bug (bake it)
+     or live dependency (explicit marker). Never probe-and-return.
 5. **Determinism at outputs, realism at inputs.** Goldens are regenerated
    deliberately (frozen by e.g. `as_of`) — a golden that changes on every
    run pins nothing. Where realism matters (upstream library shapes), feed

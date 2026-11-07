@@ -64,12 +64,29 @@ script wherever the toolchain lives — directly inside the container
 
 - Recipe names: check for collisions before adding (an `image`-build recipe
   named `build` collided with an existing `build <name>` recipe).
+- Repo toolchain file (rust-toolchain.toml, mise.toml, .tool-versions):
+  it selects a toolchain by NAME; components installed into the image
+  default do not satisfy it (observed: rustup components landed on the
+  image's 1.99 while the file asked for stable; the first clippy run
+  auto-downloaded ~150 MB at runtime; the Containerfile looked complete
+  and was not). Fix: run the toolchain manager's install from the repo
+  directory so it reads the file, then add components.
 - Tools needing real privilege: a rootless container without capabilities
   cannot grant them — mock, for example, is known-broken unprivileged
   (needs CAP_SYS_ADMIN for tmpfs/proc mounts) and requires a
   `privileged: true` service, which under rootless podman never exceeds the
   unprivileged host user (upstream-documented). Escalation belongs in a
   dedicated service, not the everyday tooling container.
+- Commands needing the HOST user session (systemctl --user, unit and
+  calendar validation) get neither privilege nor a service: the session
+  bus lives on the host. All three traps observed:
+  - create `/run/systemd/system`: systemctl checks sd_booted() first and
+    answers offline without ever trying the socket
+  - bind-mount only the bus socket FILE, never the runtime dir: as uid 0
+    sd_bus prefers systemd/private and the handshake fails ENODATA; the
+    single-file mount forces the session-bus fallback
+  - `security_opt: ["label=disable"]`: SELinux blocks the socket
+    otherwise
 - The justfile runner prefix executes commands in the container: verify
   each migrated command there, not only that the justfile parses.
 - Vendor images with tool ENTRYPOINTs (Chainguard `-dev`) swallow compose

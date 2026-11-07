@@ -30,6 +30,15 @@ the findings below are the durable part).
    (`library/rockylinux` is stale at 9.3); CentOS Stream tags are `stream10`
    not `centos-stream10`.
 
+## Freshness (checked Nov 2026 — prefer these, tables below may lag)
+
+Current majors: Debian stable = **trixie** (13, glibc 2.41; bookworm =
+oldstable) · Alpine = **3.24** · Node LTS = **26** (`node:26-alpine` exists)
+· Python = **3.15** · Go = **1.27** · Rust = **1.99** · `ubi10` and
+distroless **debian13** tags are available alongside the -9/-debian12 rows
+below. Validated numbers reference the tags we tested — when using a newer
+major, re-run the quick sufficiency checks and update this file.
+
 ## Tooling bases — general
 
 | Image | Size | Verdict |

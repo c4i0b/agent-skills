@@ -24,6 +24,8 @@ Two audiences, two artifacts:
 - Every entry must be an action, a prohibition, or a decision signal an
   agent needs at all times. How-to content, tool details and rationale go to
   docs/; keep at most a recognition signal (e.g. an error message signature).
+- Cite a file only when the file IS the usage (a command to run, a gate
+  script); otherwise reference directories or link docs.
 - Structure that works: short intro (what the repo is, where builds happen)
   → environment essentials → costly-mistake rules → reference links.
 - Link every doc from AGENTS.md; an unlinked doc is dead (the

@@ -41,20 +41,10 @@ verbatim instead of paraphrasing.
 
 ## Structure
 
-- `skills/foundations/agent-docs` — lean AGENTS.md + docs/ system,
-  decision records, optional task tracking
-- `skills/foundations/readme-shape` — README conventions per repo kind
-- `skills/foundations/writing-style` — the prose voice for AGENTS.md,
-  docs/ and READMEs
-- `skills/dev-discipline/testing-structure` — test pyramid without
-  overlap, cheapest-test-first, refactor-for-testability;
-  recorded-fixtures catalog/recorder for external-API repos
-- `skills/dev-discipline/development-policy` — day-to-day coding
-  discipline, seeded into repos as docs/development.md
-- `skills/agent-workflow/agent-orchestration` — dispatching, disciplining
-  and verifying parallel agents and nested CLI sessions
-- `skills/agent-workflow/planning` — guided decision elicitation, spec
-  convergence and the execution protocol (rulings, four stops)
-- `skills/project-setup/ephemeral-tooling/model` — the ephemeral tooling-container model
-- `skills/project-setup/ephemeral-tooling/setup` — flow: new repo into the model
-- `skills/project-setup/ephemeral-tooling/migrate` — flow: existing repo into the model
+Per category (the rules above define the categories):
+
+- foundations: agent-docs, readme-shape, writing-style
+- dev-discipline: testing-structure, development-policy
+- agent-workflow: agent-orchestration, planning
+- project-setup: ephemeral-tooling (the model reference plus setup and
+  migrate flows)

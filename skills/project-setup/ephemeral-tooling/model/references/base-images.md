@@ -20,7 +20,9 @@ before optimizing.
    binaries assume glibc. Wolfi family = small AND glibc. Alpine
    per-language images each lack something different (see table); musl is
    fine only for static payloads or verified musllinux deps.
-4. **Use the minimal image that covers the need**: start from the smallest
+4. **Use the minimal image that covers the need** (the anti-pattern has a
+   name: **archive-collecting** — starting big "to be safe"): start from
+   the smallest
    base and install exactly what is missing (`apk`/`apt` at build time —
    layer cache makes rebuilds cheap). Balance check: if what you must
    install approaches the prebuilt image's delta, the minimal base stops

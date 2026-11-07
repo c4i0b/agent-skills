@@ -5,6 +5,9 @@ are coding agents pointed at this repo by path.
 
 ## Maintenance rules (this repo's golden rules)
 
+Vocabulary is canonical in [GLOSSARY.md](GLOSSARY.md); use those terms
+verbatim instead of paraphrasing.
+
 - A skill is either a **reference** (holds knowledge) or a **flow**
   (orchestrates readings, holds no knowledge of its own). Never mix.
 - Any change to a flow or to a model reference needs a fresh scratch

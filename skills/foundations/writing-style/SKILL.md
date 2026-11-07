@@ -22,6 +22,11 @@ messages and code comments follow each repo's conventions, not this skill.
 Direct and technical: declarative sentences, no greetings, no preamble, no
 hedging. State the rule, then the reason, then stop.
 
+Before: "It's worth noting that, in most cases, tests should probably be
+written before the implementation is completed."
+After: "Test-first, always. The test is written or adjusted before or with
+the implementation."
+
 ## Audience before writing
 
 - **AGENTS.md** — rules an agent must follow every session.

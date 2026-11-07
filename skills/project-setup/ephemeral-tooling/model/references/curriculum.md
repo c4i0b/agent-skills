@@ -1,7 +1,8 @@
 # Curriculum — what to read before setup or migrate
 
-Single source for both flows. Read in order; skip conditionals that do not
-apply.
+Single source for both flows (the anti-pattern it killed has a name:
+**reading-list drift** — each flow listing its own readings, diverging).
+Read in order; skip conditionals that do not apply.
 
 1. [ephemeral-tooling-model](../SKILL.md) — the model and its invariants
 2. [agent-docs](../../../../foundations/agent-docs/SKILL.md) — the

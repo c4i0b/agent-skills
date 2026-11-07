@@ -22,9 +22,10 @@ for f in Containerfile compose.yml justfile AGENTS.md README.md docs/README.md; 
   [ -f "$scratch/$f" ] || { echo "FAIL: missing $f"; fail=1; }
 done
 
-# image naming convention: <project>/tooling:dev
-grep -q "$name/tooling:dev" "$scratch/compose.yml" \
-  || { echo "FAIL: image not named $name/tooling:dev"; fail=1; }
+# image naming convention: <project>/tooling:dev (project may differ from
+# the scratch dir name, e.g. when the flow names the app)
+grep -qE '[a-z0-9_-]+/tooling:dev' "$scratch/compose.yml" \
+  || { echo "FAIL: image not named <project>/tooling:dev"; fail=1; }
 
 # day-one test seed: a test recipe exists and runs a real suite
 grep -qE '^test[[:space:]]*:' "$scratch/justfile" \

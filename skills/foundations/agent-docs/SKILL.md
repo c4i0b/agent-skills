@@ -20,7 +20,8 @@ Two audiences, two artifacts:
   docs/; keep at most a recognition signal (e.g. an error message signature).
 - Structure that works: short intro (what the repo is, where builds happen)
   → environment essentials → costly-mistake rules → reference links.
-- Link every doc from AGENTS.md; an unlinked doc is dead.
+- Link every doc from AGENTS.md; an unlinked doc is dead (the
+  anti-pattern has a name: **orphan docs**).
 
 ## docs/ rules
 

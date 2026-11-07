@@ -28,7 +28,10 @@ deterministic environments, safe parallelism, zero idle cost.
 **`compose.yml`** — one `tooling` service:
 
 - Image tagged `<project>/tooling:dev` (compose `image:` field; consistent
-  naming across repos).
+  naming across repos). The service MUST also declare `build:` pointing at
+  the Containerfile: with only `image:`, `podman compose build` is a
+  **silent no-op** (exit 0, no image built) and the failure surfaces
+  later, displaced, at the first `run`.
 
 - `user: "0:0"` — in rootless podman this maps to the unprivileged host
   user (no host privilege gained) and is the only uid that can write the

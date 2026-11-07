@@ -13,8 +13,10 @@ apply.
 
 1. **Discover — or choose — the stack**: language, package manager, and
    the commands a developer runs (fmt, lint, test, build). In a greenfield
-   repo these are decided, not discovered: choose them first, everything
-   downstream dispatches on them. If the repo runs services too,
+   repo these are decided, not discovered: state the chosen stack and base
+   image in one line BEFORE generating anything — if running interactively,
+   wait for confirmation; if autonomous, record the choices as assumptions
+   in the handoff. If the repo runs services too,
    also read [multi-service.md](../model/references/multi-service.md). If
    it has tests, read
    [testing-structure](../../../dev-discipline/testing-structure/SKILL.md)

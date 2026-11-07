@@ -43,5 +43,5 @@ Pick by repo kind, or ask when ambiguous:
 
 ## Validated examples
 
-- `/home/caio/Projects/fedora-packages/README.md` (package monorepo)
-- `/home/caio/Projects/finance/README.md` (service app)
+- `fedora-packages/README.md` (package monorepo)
+- `finance/README.md` (service app)

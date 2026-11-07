@@ -4,12 +4,6 @@ Reusable skills for coding agents: how to initialize and migrate repos to
 the way I work. Skills are consumed by pointing an agent at this repo (see
 Using below).
 
-Validated against three real repos:
-
-- `/home/caio/Projects/fedora-packages` — monorepo, single tooling container
-- `/home/caio/Projects/finance` — service stack, dev/runtime containers
-- `/home/caio/Projects/pipoca` — media stack, tooling container + generated compose
-
 ## Layout
 
 ```
@@ -40,7 +34,7 @@ frontmatter, plus optional bundled files). To use one, tell the agent
 something like:
 
 ```
-Read /home/caio/Projects/agent-skills/skills/project-setup/ephemeral-tooling/setup/SKILL.md
+Read <path-to>/agent-skills/skills/project-setup/ephemeral-tooling/setup/SKILL.md
 and follow it to set up this repo.
 ```
 

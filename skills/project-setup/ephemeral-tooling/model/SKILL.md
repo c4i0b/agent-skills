@@ -96,5 +96,5 @@ for the suite-side of that contract.
 
 ## Validated examples
 
-- `/home/caio/Projects/fedora-packages` — single tooling container
-- `/home/caio/Projects/finance` — tooling + service containers
+- `fedora-packages` — single tooling container
+- `finance` — tooling + service containers

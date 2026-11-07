@@ -48,7 +48,7 @@ tooling (a spec repo needs none of this).
 
 ## Validated example
 
-`/home/caio/Projects/finance/docs/yfinance-service/testing-strategy.md` and
+`finance/docs/yfinance-service/testing-strategy.md` and
 `fixtures.md` — the full pyramid, markers config, durability classes and
 recorder in production use, including the bugs the realism rule caught
 (NaN tails, non-dict metadata, calendar divergence between exchanges).

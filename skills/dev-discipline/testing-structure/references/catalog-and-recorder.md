@@ -52,6 +52,6 @@ rule 3 (refactor for testability) over seams retrofitted by the recorder.
 
 ## Validated example
 
-`/home/caio/Projects/finance/docs/yfinance-service/fixtures.md` — catalog,
+`finance/docs/yfinance-service/fixtures.md` — catalog,
 durability table, refresh trigger and the failure classes recorded realism
 guards against.

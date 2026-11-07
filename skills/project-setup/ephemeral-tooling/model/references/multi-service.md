@@ -19,5 +19,5 @@ ephemeral quality loop and add a dev/runtime split:
   python -c urllib one-liner works; point it at the dev venv path via an
   env knob.
 
-Validated example: `/home/caio/Projects/finance` (compose.yml +
+Validated example: `finance` (compose.yml +
 compose.override.yml + services/*/Containerfile).

@@ -14,4 +14,4 @@ For a repo that runs an app or service stack.
   tools), then the gate command, one-service test, lifecycle and smoke
   recipes. Link the dev-workflow doc, the service README and the docs index.
 
-Validated example: `/home/caio/Projects/finance/README.md`.
+Validated example: `finance/README.md`.

@@ -51,5 +51,5 @@ Two audiences, two artifacts:
 
 ## Validated examples
 
-- `/home/caio/Projects/fedora-packages` (AGENTS.md 49 lines + thematic docs)
-- `/home/caio/Projects/finance` (AGENTS.md + per-service docs + ADRs)
+- `fedora-packages` (AGENTS.md 49 lines + thematic docs)
+- `finance` (AGENTS.md + per-service docs + ADRs)

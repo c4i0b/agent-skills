@@ -29,6 +29,10 @@ the parity gate passes.
      decide host-side vs mounted file per the model.
    - Git hooks: where does hook logic run today, and what toolchain does it
      need?
+   - Tests: do any depend on network or live services? The target state is
+     offline-by-default with live layers opt-in — apply
+     [testing-structure](../../repo-foundations/testing-structure/SKILL.md)
+     when migrating the suite.
    - CI: how does it run today? Wire the DIRECT bypass
      ([ci-bypass.md](../model/references/ci-bypass.md)) if recipes must run
      there too.

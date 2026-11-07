@@ -76,6 +76,10 @@ script wherever the toolchain lives — directly inside the container
   base: tooling vs runtime, per-case validated table
 - [multi-service.md](references/multi-service.md) — when the repo also runs
   services (dev/runtime targets, override file)
+
+The quality loop stays hermetic when the suite is offline-by-default —
+see [testing-structure](../../repo-foundations/testing-structure/SKILL.md)
+for the suite-side of that contract.
 - [ci-bypass.md](references/ci-bypass.md) — CI parity via the DIRECT bypass
 
 ## Validated examples

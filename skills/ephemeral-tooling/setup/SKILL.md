@@ -18,7 +18,11 @@ Read first, in order:
 
 1. **Discover the stack**: language, package manager, and the commands a
    developer runs (fmt, lint, test, build). If the repo runs services too,
-   also read [multi-service.md](../model/references/multi-service.md).
+   also read [multi-service.md](../model/references/multi-service.md). If
+   it has tests, read
+   [testing-structure](../../repo-foundations/testing-structure/SKILL.md)
+   before writing the suite — and if it consumes external APIs, its
+   catalog-and-recorder reference too.
 2. **Containerfile**: bake the full toolchain for those commands. Complete
    on day one — no "install later". Base image: the stack's OFFICIAL image,
    `latest` tag by default (see [base-images.md](../model/references/base-images.md)

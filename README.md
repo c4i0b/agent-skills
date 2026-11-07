@@ -4,10 +4,11 @@ Reusable skills for coding agents: how to initialize and migrate repos to
 the way I work. Skills are consumed by pointing an agent at this repo (see
 Using below).
 
-Validated against two real repos:
+Validated against three real repos:
 
 - `/home/caio/Projects/fedora-packages` — monorepo, single tooling container
 - `/home/caio/Projects/finance` — service stack, dev/runtime containers
+- `/home/caio/Projects/pipoca` — media stack, tooling container + generated compose
 
 ## Layout
 
@@ -16,6 +17,7 @@ skills/
   repo-foundations/           # transversal: any repo benefits
     agent-docs/               # lean AGENTS.md ⇄ docs/ (+ references/)
     readme-shape/             # README for humans (+ references/ per repo kind)
+    testing-structure/        # pyramid, cheapest-first, recorded fixtures
   ephemeral-tooling/          # one domain: everything about the container model
     model/                    # the reference (+ references/)
     setup/                    # flow: greenfield repo in the model
@@ -42,6 +44,10 @@ what order. Reference skills hold the knowledge.
 
 Built only when a real validated example exists:
 
+- a coding/refactoring skill on **modularity**, seeded by the
+  testing-structure rule that code must be refactored to enable cheap
+  tests (seams, ports, injection) — validated once in finance; a dedicated
+  skill waits for a second real use
 - `readme-shape/references/cli-tool.md`, `library.md`
 - `ephemeral-tooling/model/references/credentials.md`
 - a drift-review flow (does this repo still follow the model?)

@@ -25,6 +25,9 @@ are coding agents pointed at this repo by path.
 - `repo-foundations/agent-docs` — lean AGENTS.md + docs/ system, decision
   records, optional task tracking
 - `repo-foundations/readme-shape` — README conventions per repo kind
+- `repo-foundations/testing-structure` — test pyramid without overlap,
+  cheapest-test-first, refactor-for-testability; recorded-fixtures
+  catalog/recorder for external-API repos
 - `ephemeral-tooling/model` — the ephemeral tooling-container model
 - `ephemeral-tooling/setup` — flow: new repo into the model
 - `ephemeral-tooling/migrate` — flow: existing repo into the model

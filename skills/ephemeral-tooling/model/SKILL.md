@@ -72,6 +72,8 @@ script wherever the toolchain lives — directly inside the container
 
 ## References
 
+- [base-images.md](references/base-images.md) — choosing the Containerfile
+  base: tooling vs runtime, per-case validated table
 - [multi-service.md](references/multi-service.md) — when the repo also runs
   services (dev/runtime targets, override file)
 - [ci-bypass.md](references/ci-bypass.md) — CI parity via the DIRECT bypass

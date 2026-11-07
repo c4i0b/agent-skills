@@ -26,11 +26,17 @@ the repo's docs/config around what it created.
 - Shared repo where beads must stay a personal choice: `bd init --stealth`
   (writes `.git/info/exclude` instead; invisible to collaborators).
 - Repo with its own versioned hooks (e.g. `.githooks` via `core.hooksPath`):
-  after `bd init` restores nothing (it overwrites hooksPath), re-point
-  `git config core.hooksPath .githooks` and run `bd hooks install` — it
-  injects beads sections into the EXISTING hook files inside
-  BEGIN/END BEADS INTEGRATION markers, preserving prior content (keeps a
-  `.backup`), so one hooks directory serves both.
+  `bd init` overwrites hooksPath — restore it
+  (`git config core.hooksPath .githooks`). Then note: `bd hooks install`
+  only auto-injects its marker sections into hooks it owns (untracked /
+  `.git/hooks`); for a VERSIONED hooks dir it refuses. Instead, copy the
+  `BEGIN/END BEADS INTEGRATION` sections from `.beads/hooks/*` into the
+  tracked hook files, keeping the repo's own logic intact in the same file
+  (one hooks directory serves both; content outside the markers is
+  preserved across bd upgrades).
+- `bd init` may also write agent-integration side files (e.g. `CLAUDE.md`,
+  `.agents/`, `.claude/`) and append to AGENTS.md — review and keep or
+  revert them deliberately; gitignore `*.backup` in the hooks dir.
 - Agent-tool integration (optional): `bd setup <tool> --stealth`.
 
 ## Tracking

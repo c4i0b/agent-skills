@@ -30,14 +30,15 @@ the findings below are the durable part).
    (`library/rockylinux` is stale at 9.3); CentOS Stream tags are `stream10`
    not `centos-stream10`.
 
-## Freshness (checked Nov 2026 — prefer these, tables below may lag)
+## Freshness (checked Nov 2026 — ALWAYS use these, not older tested tags)
 
 Current majors: Debian stable = **trixie** (13, glibc 2.41; bookworm =
-oldstable) · Alpine = **3.24** · Node LTS = **26** (`node:26-alpine` exists)
-· Python = **3.15** · Go = **1.27** · Rust = **1.99** · `ubi10` and
-distroless **debian13** tags are available alongside the -9/-debian12 rows
-below. Validated numbers reference the tags we tested — when using a newer
-major, re-run the quick sufficiency checks and update this file.
+oldstable) · Alpine = **3.24** · Node LTS = **26** (`node:26-alpine`) ·
+Python = **3.15** · Go = **1.27** · Rust = **1.99** · `ubi10` and
+distroless **debian13** alongside the -9/-debian12 rows below. The tables
+reference the tags we tested — substitute the CURRENT major listed here
+when using them (python-3.15, not python-3.13; alpine 3.24, not 3.22), and
+update this file when a newer major lands.
 
 ## Tooling bases — general
 
@@ -55,7 +56,7 @@ major, re-run the quick sufficiency checks and update this file.
 
 | Language | Alpine route | wolfi-base + apk | Chainguard `-dev` | Pick |
 |---|---|---|---|---|
-| Python | `python:3.15-alpine` 56 MB: six/uvloop ok, **opencv fails, no compiler** | **85 MB**: six/pillow/cryptography/opencv/uvloop ALL pass (`python-3.13`+`py3.13-pip`) | 667 MB: all pass | **wolfi+apk** (smallest with the whole manylinux ecosystem) |
+| Python | `python:3.15-alpine` 56 MB: six/uvloop ok, **opencv fails, no compiler** | **85 MB**: six/pillow/cryptography/opencv/uvloop ALL pass (`python-3.15`+`py3.15-pip`; measured on 3.13) | 667 MB: all pass | **wolfi+apk** (smallest with the whole manylinux ecosystem) |
 | Node | `node:22-alpine` 171 MB: sharp ok (musl prebuilds!), **node-gyp fails (no python)** | **166 MB** (`nodejs-24`+`npm`): sharp ok, node-gyp ok after `apk add python3 gcc g++ make`; npm 12 gates install scripts (`npm install-scripts approve`) | 755 MB: all pass | **wolfi+apk** (smaller than alpine, glibc prebuilds) |
 | Go | `golang:1.27-alpine` 266 MB: **static builds ideal, CGO fails (no gcc since 1.27)**; prebuilt glibc dies | 240 MB (go+git, go 1.27/gcc 16) | 754 MB: CGO ok | **wolfi+apk**; alpine fine for pure static Go |
 | Rust | `rust:1-alpine` 1.04 GB (musl native) | 1.08 GB: needs explicit `build-base`, no musl-dev; rustup-musl route fights apk cargo | 1.1 GB: cargo ok | **`-dev`**; or debian `rust:slim-bookworm` + `rustup target add x86_64-unknown-linux-musl` for static musl binaries (runs anywhere) |

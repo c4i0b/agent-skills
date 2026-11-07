@@ -8,6 +8,31 @@ prefer beads over ad-hoc TODO lists for multi-step work; if it fails,
 proceed without it (no error, no setup attempt). bd runs on the HOST — it is
 not part of any container.
 
+## Initialization (per repo, host-side)
+
+Order matters: `bd init` creates `.beads/` (embedded Dolt storage) AND
+claims `core.hooksPath` (points it at `.beads/hooks`, absolute path) plus
+`beads.role` in the LOCAL git config. So initialize beads FIRST, then adapt
+the repo's docs/config around what it created.
+
+- `bd init` self-manages `.beads/.gitignore`: only runtime files (dolt
+  data, locks, sockets) are ignored; by beads' design `config.yaml`,
+  `metadata.json`, `hooks/` and `README.md` inside `.beads/` are meant to
+  be committed so collaborators share prefix/config/hooks. Issue data syncs
+  cross-machine via Dolt remotes (`bd dolt push`), never via git.
+- Personal/local choice (state never committed): ignore `.beads/` entirely
+  in the repo `.gitignore` — a deliberate deviation from the default
+  design; on a fresh clone re-run `bd init` to restore the local database.
+- Shared repo where beads must stay a personal choice: `bd init --stealth`
+  (writes `.git/info/exclude` instead; invisible to collaborators).
+- Repo with its own versioned hooks (e.g. `.githooks` via `core.hooksPath`):
+  after `bd init` restores nothing (it overwrites hooksPath), re-point
+  `git config core.hooksPath .githooks` and run `bd hooks install` — it
+  injects beads sections into the EXISTING hook files inside
+  BEGIN/END BEADS INTEGRATION markers, preserving prior content (keeps a
+  `.backup`), so one hooks directory serves both.
+- Agent-tool integration (optional): `bd setup <tool> --stealth`.
+
 ## Tracking
 
 - `bd prime` for full workflow context before starting

@@ -58,9 +58,12 @@ script wherever the toolchain lives — directly inside the container
 
 - Recipe names: check for collisions before adding (an `image`-build recipe
   named `build` collided with an existing `build <name>` recipe).
-- Tools needing real privilege (mock-style sandboxing) need an isolation
-  fallback inside rootless containers (e.g. `--isolation=simple`); validate
-  on first real use, not preemptively.
+- Tools needing real privilege: a rootless container without capabilities
+  cannot grant them — mock, for example, is known-broken unprivileged
+  (needs CAP_SYS_ADMIN for tmpfs/proc mounts) and requires a
+  `privileged: true` service, which under rootless podman never exceeds the
+  unprivileged host user (upstream-documented). Escalation belongs in a
+  dedicated service, not the everyday tooling container.
 - The justfile runner prefix executes commands in the container: verify
   each migrated command there, not only that the justfile parses.
 

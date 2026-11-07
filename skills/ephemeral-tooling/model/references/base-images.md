@@ -25,8 +25,11 @@ the findings below are the durable part).
    binaries assume glibc. Wolfi family = small AND glibc. Alpine per
    language images each lack something different (see table) — musl is
    fine only for static payloads or verified musllinux deps.
-4. Prefer slim base + install-at-build over fat images: layer cache makes
-   rebuilds cheap, and you get exactly the toolchain you need.
+4. **Use the minimal image that covers the need**: start from the smallest
+   base that can bake your toolchain (see tables) and install exactly what
+   is missing (`apk`/`apt` at build time — layer cache makes rebuilds
+   cheap). Step up to a fatter per-language image only when composing is
+   demonstrably not worth it; never start big "to be safe".
 5. Registry quirks: `quay.io/redhatubi` and `quay.io/almalinux` refuse
    anonymous pulls; Rocky 10 lives at `docker.io/rockylinux/rockylinux:10`
    (`library/rockylinux` is stale at 9.3); CentOS Stream tags are `stream10`

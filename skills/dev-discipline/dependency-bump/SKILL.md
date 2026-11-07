@@ -1,0 +1,85 @@
+---
+name: dependency-bump
+description: Routine dependency-and-image-tag bump with cheap local checks and a PR that auto-merges on green branch CI. Stack-agnostic (uv, poetry, npm, pnpm, yarn, go, cargo, bundler) via a data table in the one stdlib Python script. Use when bumping deps or refreshing image tags in any repo.
+---
+
+# Dependency bump (check, merge)
+
+A flow, not knowledge: tag policy and current majors live in
+[base-images.md](../../project-setup/ephemeral-tooling/model/references/base-images.md)
+(keep the script's `CURRENT` table in sync with its Freshness list);
+cheapest-first check ordering lives in
+[testing-structure](../testing-structure/SKILL.md).
+
+Why this exists (observed red): an EOL image tag once shipped unnoticed
+(the failure `tests/scaffold-check.sh` now asserts against), and dependency
+age is a certain recurrence in every repo. Renovate-style autoupdate is
+rejected (DECISIONS.md), so the bump surface we own is one stdlib script.
+
+## Tooling base (validated)
+
+`cgr.dev/chainguard/wolfi-base` + `apk add git python-3.15 gh` —
+validated Nov 2026 (git 2.56, Python 3.15.2, gh 2.103.3). The package is
+`gh`, NOT `github-cli` (does not exist in wolfi). glibc means the native
+updaters' prebuilt binaries run. Per base-images.md rule 4 this is the
+minimal base that covers the need (19 MB).
+
+## Flow
+
+1. Copy `scripts/bump.py` into the repo as `tools/bump.py` and add a
+   thin justfile recipe:
+
+   ```just
+   bump:
+       {{runner}} python tools/bump.py
+   ```
+
+2. Run `just bump` (updaters run in the tooling container, where the
+   toolchain lives). Credentials: the script also pushes and calls `gh`,
+   so it needs token-based gh auth reachable from there (`GH_TOKEN` env
+   or `~/.config/gh` mounted ro). If credentials are keyring-based,
+   run with `--no-pr` in-container and do the PR host-side (the model
+   keeps push/credentials tooling where the credentials live).
+3. Checks are the repo's own cheapest gates — `just lint` and `just test`
+   when the recipes exist; the full matrix stays on branch CI.
+4. Merge is `gh pr merge --auto --squash`: the PR merges only when
+   branch CI goes green, so cheap local checks + full CI both gate the
+   merge. Auto-merge requires branch protection with the CI check as
+   required — and **no required reviews**: the PR author cannot approve
+   their own PR, so required reviews stall a solo auto-merge forever
+   (observed in validation: PR armed, CI green, sat OPEN until reviews
+   were dropped from protection). Auto-merge triggers on check
+   completion — if protection changed after arming, re-run the merge
+   command to re-arm. Without auto-merge enabled the script leaves the
+   PR open and says so.
+5. Scripts must stay environment-agnostic (see
+   [ci-bypass.md](../../project-setup/ephemeral-tooling/model/references/ci-bypass.md)):
+   `bump.py` derives nothing from container-only paths.
+
+## Any stack
+
+The stack table is data, not code: manifest marker → native updater
+command. A stack is "supported" when its lockfile has a native
+conservative updater; new rows ship only when a real repo needs them
+(no speculation). Stacks without a lockfile-native updater (maven, raw
+requirements.txt) fall back to image-tag fixes plus a report — never
+regex-bump manifests by hand in the script.
+
+## PR description
+
+Lean, single table: one-line summary (`Updates 3 dependencies, 1 major
+and 1 image tag.`), then `| What | From | To |` rows — majors first
+with ⚠️ and bold on the new version, then the rest, then image tags.
+Review-only findings (untracked images, codenames, version-in-repo-name)
+go under `### Needs review`; manifest diffs (small) append verbatim;
+lockfiles never paste, they summarize from the version diff. Zero counts
+and minor/patch types are omitted — major is the only classification
+that changes how a human reviews.
+
+## Safety rails
+
+- `--dry-run`: report tags and which updaters would run; mutates nothing.
+- Failed updater: warning, continue; failed cheap check: abort with the
+  worktree dirty for inspection (nothing committed, nothing pushed).
+- Codename and untracked tags are reported for manual review, never
+  rewritten.

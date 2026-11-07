@@ -1,53 +1,45 @@
 # Base images by use case
 
 Selection guide for the Containerfile base, validated by live tests
-(Nov 2026, 9 test agents; sizes unpacked and indicative — re-measure
-before optimizing). Evidence reports: `/tmp/opencode/img-test/` (volatile;
-the findings below are the durable part).
+(9 test agents, Nov 2026). Sizes are unpacked and indicative — re-measure
+before optimizing.
 
 ## Decision rules
 
-0. Freshness check (quick, before using): verify the image/tag still exists
-   and is the current major (e.g. `podman manifest inspect`, release notes).
-   Use the latest stable. If a newer base than this doc's tables exists,
-   prefer it and send a one-line update to this file.
-1. Two different questions: a **tooling** base (shell + package manager to
-   bake the toolchain) vs a **runtime** base (ships an artifact). The
-   distroless family is runtime-only — no shell, no package manager.
-2. Tag policy: **default to `latest`** (always current, zero staleness).
-   Pin a major tag only when reproducibility demands it — and then verify
-   it IS the current major (`podman manifest inspect`), use the newest, and
-   update the Freshness list below. Chainguard free tier serves only
-   `latest`/`latest-dev` anyway (digest-pin when repeating). For exact
-   toolchain pinning nothing beat nix (`-I nixpkgs=<rev>`): byte-identical
-   store paths across fresh containers.
+1. A **tooling** base (shell + package manager to bake the toolchain) is a
+   different question from a **runtime** base (ships an artifact).
+   Distroless is runtime-only — no shell, no package manager.
+2. Tag policy: **default to `latest`**. Pin a major only when
+   reproducibility demands it — then verify it is the current major
+   (`podman manifest inspect`) and keep the Freshness list below current.
+   Chainguard free tier serves only `latest`/`latest-dev` (digest-pin when
+   repeating). For exact toolchain pinning nothing beats nix
+   (`-I nixpkgs=<rev>`): byte-identical store paths across fresh
+   containers.
 3. glibc vs musl decides more than size: manylinux wheels and prebuilt
-   binaries assume glibc. Wolfi family = small AND glibc. Alpine per
-   language images each lack something different (see table) — musl is
+   binaries assume glibc. Wolfi family = small AND glibc. Alpine
+   per-language images each lack something different (see table); musl is
    fine only for static payloads or verified musllinux deps.
 4. **Use the minimal image that covers the need**: start from the smallest
-   base that can bake your toolchain (see tables) and install exactly what
-   is missing (`apk`/`apt` at build time — layer cache makes rebuilds
-   cheap). **Balance check**: if what you must install approaches the
-   prebuilt per-language image's delta, the minimal base stops paying —
-   take the prebuilt (see the Rust row: 1.08 GB composed vs 1.10 GB
-   prebuilt → prebuilt wins; Python row: 85 MB composed vs 667 MB prebuilt
-   → composed wins). Judge on final size, install complexity and who owns
-   the package list; never start big "to be safe".
+   base and install exactly what is missing (`apk`/`apt` at build time —
+   layer cache makes rebuilds cheap). Balance check: if what you must
+   install approaches the prebuilt image's delta, the minimal base stops
+   paying — take the prebuilt (Rust: 1.08 GB composed vs 1.10 GB prebuilt
+   → prebuilt wins; Python: 85 MB vs 667 MB → composed wins). Judge on
+   final size, install complexity and who owns the package list.
 5. Registry quirks: `quay.io/redhatubi` and `quay.io/almalinux` refuse
    anonymous pulls; Rocky 10 lives at `docker.io/rockylinux/rockylinux:10`
-   (`library/rockylinux` is stale at 9.3); CentOS Stream tags are `stream10`
-   not `centos-stream10`.
+   (`library/rockylinux` is stale at 9.3); CentOS Stream tags are
+   `stream10` not `centos-stream10`.
 
-## Freshness (checked Nov 2026 — keep this list at the latest major)
+## Freshness
 
-Policy: **use `latest` tags**; if you pin a major instead, it must be the
-CURRENT one below — if it is not listed or is outdated, use `latest`, then
-update this list with the new major. Current majors: Debian stable =
-**trixie** (13, glibc 2.41) · Alpine = **3.24** · Node LTS = **26** ·
-Python = **3.15** · Go = **1.27** · Rust = **1.99** · `ubi10` /
-distroless **debian13** alongside the -9/-debian12 rows below. Tables
-reference tested tags — sizes stay indicative across minors.
+Policy: **use `latest`**; a pinned major must be the CURRENT one below —
+if it is not listed or is outdated, use `latest` and update this list.
+Current majors (Nov 2026): Debian stable = **trixie** (13, glibc 2.41) ·
+Alpine = **3.24** · Node LTS = **26** · Python = **3.15** · Go = **1.27**
+· Rust = **1.99** · `ubi10` / distroless **debian13** alongside the
+-9/-debian12 rows below.
 
 ## Tooling bases — general
 
@@ -55,27 +47,27 @@ reference tested tags — sizes stay indicative across minors.
 |---|---:|---|
 | `cgr.dev/chainguard/wolfi-base` (digest-pinned) | 19 MB | **recommended default**: glibc 2.44 + apk; prebuilt glibc binaries and glibc-only wheels run |
 | `debian:bookworm-slim` | 78 MB | **recommended** when Debian parity or glibc 2.36 matters; `build-essential` in ~10 s |
-| `nixos/nix:latest` | 593 MB→~871 MB | **recommended when exact pinning matters**: `-I nixpkgs=<rev>` gives byte-identical toolchains across fresh containers; GC line is mandatory (2.3 GB→871 MB); sandbox works rootless with defaults. Note: `:minimal` and `ghcr.io/determinatesystems/nix` do NOT exist |
+| `nixos/nix:latest` | 593 MB→~871 MB | **recommended when exact pinning matters**; the GC line is mandatory (2.3 GB→871 MB); sandbox works rootless with defaults. `:minimal` and `ghcr.io/determinatesystems/nix` do not exist |
 | `registry.fedoraproject.org/fedora:rawhide` | 398 MB | **recommended** when the target IS Fedora/rpm (python3 no longer in base) |
 | `registry.access.redhat.com/ubi9` | 219 MB | acceptable: dnf, enterprise parity |
 | `alpine:3.22` + apk | 9 MB+ | acceptable only for static/pure payloads: musl |
 | distroless family, `ubi9-micro`, `glibc-dynamic` | 3–24 MB | **avoid** for tooling: no shell and/or no package manager |
 
-## Tooling bases — per language (all tested)
+## Tooling bases — per language
 
 | Language | Alpine route | wolfi-base + apk | Chainguard `-dev` | Pick |
 |---|---|---|---|---|
-| Python | `python:3.15-alpine` 56 MB: six/uvloop ok, **opencv fails, no compiler** | **85 MB**: six/pillow/cryptography/opencv/uvloop ALL pass (`python-3.15`+`py3.15-pip`; measured on 3.13) | 667 MB: all pass | **wolfi+apk** (smallest with the whole manylinux ecosystem) |
-| Node | `node:22-alpine` 171 MB: sharp ok (musl prebuilds!), **node-gyp fails (no python)** | **166 MB** (`nodejs-24`+`npm`): sharp ok, node-gyp ok after `apk add python3 gcc g++ make`; npm 12 gates install scripts (`npm install-scripts approve`) | 755 MB: all pass | **wolfi+apk** (smaller than alpine, glibc prebuilds) |
+| Python | `python:3.15-alpine` 56 MB: six/uvloop ok, **opencv fails, no compiler** | **85 MB**: six/pillow/cryptography/opencv/uvloop all pass (`python-3.15`+`py3.15-pip`) | 667 MB: all pass | **wolfi+apk** (smallest with the whole manylinux ecosystem) |
+| Node | `node:22-alpine` 171 MB: sharp ok (musl prebuilds), **node-gyp fails (no python)** | **166 MB** (`nodejs-24`+`npm`): sharp ok; node-gyp needs `apk add python3 gcc g++ make`; npm 12 gates install scripts (`npm install-scripts approve`) | 755 MB: all pass | **wolfi+apk** (smaller than alpine, glibc prebuilds) |
 | Go | `golang:1.27-alpine` 266 MB: **static builds ideal, CGO fails (no gcc since 1.27)**; prebuilt glibc dies | 240 MB (go+git, go 1.27/gcc 16) | 754 MB: CGO ok | **wolfi+apk**; alpine fine for pure static Go |
-| Rust | `rust:1-alpine` 1.04 GB (musl native) | 1.08 GB: needs explicit `build-base`, no musl-dev; rustup-musl route fights apk cargo | 1.1 GB: cargo ok | **`-dev`**; or debian `rust:slim-bookworm` + `rustup target add x86_64-unknown-linux-musl` for static musl binaries (runs anywhere) |
+| Rust | `rust:1-alpine` 1.04 GB (musl native) | 1.08 GB: needs explicit `build-base`, no musl-dev; rustup-musl route fights apk cargo | 1.1 GB: cargo ok | **`-dev`**; or `rust:slim-bookworm` + `rustup target add x86_64-unknown-linux-musl` for static musl binaries (runs anywhere) |
 
 ## Runtime bases
 
 | Artifact | Image | Size | Verdict |
 |---|---|---:|---|
 | Static Go/Rust | `gcr.io/distroless/static-debian12` | 3 MB | **recommended** |
-| CGO Go / TLS | `gcr.io/distroless/base-debian12` | 22 MB | **recommended** (CA certs verified live) |
+| CGO Go / TLS | `gcr.io/distroless/base-debian12` | 22 MB | **recommended** (CA certs verified) |
 | C++ | `gcr.io/distroless/cc-debian12` | 25 MB | **recommended** |
 | Static + tiny + shell | `alpine:3.22` | 9 MB | recommended |
 | Self-contained Python/JS | `distroless/python3-debian12` (55 MB) / `nodejs22-debian12` (149 MB) | | acceptable: no pip/npm, copy the artifact in |
@@ -88,7 +80,12 @@ Clean handoff: build in `debian:bookworm-slim`, run in distroless-debian12
 ## EL compat test targets (EPEL/RHEL family)
 
 Not tooling bases: containers to test artifacts against the EL toolchain
-generation and simulate the end user.
+generation and simulate the end user:
+
+```sh
+dnf -y install dnf-plugins-core && dnf copr enable <owner>/<project> \
+  && dnf -y install <pkg>    # + dnf -y install epel-release for EPEL deps
+```
 
 | Image | Verdict |
 |---|---|
@@ -97,25 +94,22 @@ generation and simulate the end user.
 | `docker.io/rockylinux/rockylinux:10` | acceptable (equivalent to alma) |
 | EL9 family | acceptable but pointless without epel-9 consumers; `library/rockylinux:9` upstream-frozen — avoid |
 
-End-user simulation (verified): `dnf -y install dnf-plugins-core && dnf copr
-enable <owner>/<project> && dnf -y install <pkg>`; packages with EPEL deps
-also need `dnf -y install epel-release`. Nuance: rpm < 4.20 does NOT
-hard-fail on macros in comments — it **expands them silently** (including
-`%(shell)`, which executes); the danger is silent expansion, not a parse
-error.
+Nuance: rpm < 4.20 does NOT hard-fail on macros in comments — it expands
+them silently (including `%(shell)`, which executes). The danger is silent
+expansion, not a parse error.
 
 ## Windows targets (from Linux)
 
-Windows containers cannot run on a Linux kernel (verified: PE binaries and
-no /etc/passwd). From Linux you can cross-compile and smoke-test:
+Windows containers cannot run on a Linux kernel. From Linux, cross-compile
+and smoke-test:
 
 | Route | Cost | Verdict |
 |---|---|---|
 | `debian:bookworm-slim` + `gcc-mingw-w64-x86-64` | 639 MB, 14.5 s cold | **recommended** cross-compile toolchain |
-| Go `GOOS=windows` | trivial (2 s); CGO via mingw CC works | recommended |
+| Go `GOOS=windows` | trivial; CGO via mingw CC works | recommended |
 | Rust windows-gnu | rustup alone cannot link (missing import libs); needs mingw + `CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER`; xwin/lld-link route for MSVC | acceptable |
 | zig cc tarball (`zig cc -target x86_64-windows-gnu`) | 50 MB toolchain | acceptable bonus |
-| Wine smoke (`wine-core wine-common` on fedora) | 3.03 GB (full wine 5.57 GB) | acceptable: runs built .exe headless; warm the prefix at build time (10–40 s first run), `WINEDEBUG=-all`, writable `$HOME` |
+| Wine smoke (`wine-core wine-common` on fedora) | 3.03 GB | acceptable: runs built .exe headless; warm the prefix at build time (10–40 s first run), `WINEDEBUG=-all`, writable `$HOME` |
 
 Escape hatches for real Windows containers: Windows VM, GitHub Actions
 Windows runners, AKS Windows nodes.
@@ -124,7 +118,7 @@ Windows runners, AKS Windows nodes.
 
 | Image | Verdict |
 |---|---|
-| `nixery.dev/<packages>` | **recommended for one-shots**; **avoid as a base**: channel tags ignored (unstable moves), amd64-only, FAQ says not for production; pin by digest when repeating; self-host with `NIXERY_PKGS_REPO` pinned is the only safe dependence |
+| `nixery.dev/<packages>` | **recommended for one-shots**; **avoid as a base**: channel tags ignored (unstable moves), amd64-only; pin by digest when repeating; self-host with `NIXERY_PKGS_REPO` pinned is the only safe dependence |
 | `cgr.dev/chainguard/bash` / `busybox` / `git` | acceptable step bases |
 
 ## Debunked along the way (do not re-litigate)

@@ -1,0 +1,10 @@
+# agent-skills
+
+- [Overview](README.md): what this repo is, layout, how to consume skills
+- [AGENTS.md](AGENTS.md): golden rules and structure
+- [GLOSSARY.md](GLOSSARY.md): canonical vocabulary
+- [DECISIONS.md](DECISIONS.md): rejected concepts and strip conditions
+- Skills: [foundations](skills/foundations) ·
+  [dev-discipline](skills/dev-discipline) ·
+  [agent-workflow](skills/agent-workflow) ·
+  [project-setup](skills/project-setup)

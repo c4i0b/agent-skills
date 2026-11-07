@@ -9,12 +9,20 @@ Read [curriculum.md](../model/references/curriculum.md) first — it is the
 single reading list for both flows; skip the conditionals that do not
 apply.
 
-Work on a branch off an updated main. Do not remove the old mechanism until
-the parity gate passes.
+Work on a branch off an updated main. **Audit first, apply by tier** (the
+validated adoption pattern, converging from agent-starter, project-continuity
+and OpenAI's migrate skill): stage 1 is READ-ONLY (inventory + gap report,
+invent nothing); stage 2 applies only approved tiers, never overwriting
+existing files without explicit confirmation.
 
 ## Flow
 
-1. **Audit the current environment** (do not skip):
+1. **Audit the current environment (do not skip, change nothing)**:
+   - Produce the gap report BEFORE any edit: per artifact, finding and
+     proposed action with an invasiveness tier (1 docs-only / 2 AGENTS +
+     missing docs / 3 dev policy and testing structure / 4 environment
+     tooling and hooks / 5 modifying existing infrastructure). No tests in
+     the repo: cap at the non-invasive tiers and say so.
    - How do commands run today? (distrobox, host-installed tools, venv,
      make, docker) Read the entrypoints (Makefile/justfile/README) and
      every script they call.

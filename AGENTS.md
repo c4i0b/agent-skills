@@ -7,6 +7,10 @@ are coding agents pointed at this repo by path.
 
 - A skill is either a **reference** (holds knowledge) or a **flow**
   (orchestrates readings, holds no knowledge of its own). Never mix.
+- Any change to a flow or to a model reference must pass
+  `tests/scaffold-smoke.sh` before commit — a flow that has not produced a
+  real scratch repo is unvalidated (that is how an EOL image tag and a
+  missing initial commit once shipped).
 - A new variant, reference file or skill ships only with a real validated
   example, or a certain recurrence. No speculation.
 - A category directory groups knowledge that references itself

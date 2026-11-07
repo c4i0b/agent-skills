@@ -18,6 +18,9 @@ skills/
     agent-docs/               # lean AGENTS.md ⇄ docs/ (+ references/)
     readme-shape/             # README for humans (+ references/ per repo kind)
     testing-structure/        # pyramid, cheapest-first, recorded fixtures
+    agent-orchestration/      # parallel subagents, nested CLI sessions,
+                              # verify-after-delegate, research campaigns
+    writing-style/            # the prose voice for repo artifacts
   ephemeral-tooling/          # one domain: everything about the container model
     model/                    # the reference (+ references/)
     setup/                    # flow: greenfield repo in the model

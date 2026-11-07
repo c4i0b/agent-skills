@@ -5,12 +5,9 @@ description: Flow to migrate an EXISTING repo into the ephemeral tooling model (
 
 # Migrate: existing repo into the model
 
-Read first, in order:
-
-1. [ephemeral-tooling-model](../model/SKILL.md) — the model and its
-   invariants
-2. [agent-docs](../../repo-foundations/agent-docs/SKILL.md)
-3. [readme-shape](../../repo-foundations/readme-shape/SKILL.md)
+Read [curriculum.md](../model/references/curriculum.md) first — it is the
+single reading list for both flows; skip the conditionals that do not
+apply.
 
 Work on a branch off an updated main. Do not remove the old mechanism until
 the parity gate passes.

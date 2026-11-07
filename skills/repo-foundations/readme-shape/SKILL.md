@@ -21,11 +21,10 @@ work on it.
 
 ## Style rules (strict)
 
-- English only.
-- No em dashes, no semicolons.
-- Short paragraphs, short bullets; every sentence adds information.
-- Machine-generated regions (delimited by markers) are never hand-edited and
-  must not bury the first screen.
+Follow [writing-style](../writing-style/SKILL.md) — English only, no em
+dashes, no semicolons, short paragraphs and bullets. README-specific:
+machine-generated regions (delimited by markers) are never hand-edited and
+must not bury the first screen.
 
 ## Variants
 

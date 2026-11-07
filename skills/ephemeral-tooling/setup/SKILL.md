@@ -5,14 +5,9 @@ description: Flow to set up a NEW repo directly in the ephemeral tooling model. 
 
 # Setup: new repo in the model
 
-Read first, in order:
-
-1. [ephemeral-tooling-model](../model/SKILL.md) — the model and its
-   invariants
-2. [agent-docs](../../repo-foundations/agent-docs/SKILL.md) — the AGENTS.md
-   ⇄ docs/ system (incl. optional task tracking)
-3. [readme-shape](../../repo-foundations/readme-shape/SKILL.md) — README by
-   repo kind
+Read [curriculum.md](../model/references/curriculum.md) first — it is the
+single reading list for both flows; skip the conditionals that do not
+apply.
 
 ## Flow
 

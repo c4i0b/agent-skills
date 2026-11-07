@@ -24,8 +24,9 @@ Two audiences, two artifacts:
 
 ## docs/ rules
 
-- `docs/README.md` is the index; one policy per doc; evergreen English
-  (durable rationale, never session play-by-play).
+- `docs/README.md` is the index; one policy per doc; prose follows
+  [writing-style](../writing-style/SKILL.md) (English, evergreen, no
+  session play-by-play).
 - Names by theme (`environment.md`, `conventions.md`), not by date or event.
 - Duplication with AGENTS.md is allowed only as summary-in-AGENTS +
   detail-in-doc. If the detail adds nothing, the doc owns the rule and

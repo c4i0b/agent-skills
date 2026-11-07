@@ -28,6 +28,10 @@ are coding agents pointed at this repo by path.
 - `repo-foundations/testing-structure` — test pyramid without overlap,
   cheapest-test-first, refactor-for-testability; recorded-fixtures
   catalog/recorder for external-API repos
+- `repo-foundations/agent-orchestration` — dispatching, disciplining and
+  verifying parallel agents and nested CLI sessions
+- `repo-foundations/writing-style` — the prose voice for AGENTS.md, docs/
+  and READMEs
 - `ephemeral-tooling/model` — the ephemeral tooling-container model
 - `ephemeral-tooling/setup` — flow: new repo into the model
 - `ephemeral-tooling/migrate` — flow: existing repo into the model

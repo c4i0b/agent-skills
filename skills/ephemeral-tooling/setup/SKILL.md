@@ -1,6 +1,6 @@
 ---
 name: ephemeral-tooling-setup
-description: Flow to set up a NEW repo directly in the ephemeral tooling model. Read ephemeral-tooling-model, agent-docs and readme-shape first. Covers stack discovery, artifact creation order and the validation gate.
+description: Flow to set up a NEW repo directly in the ephemeral tooling model. Start from model/references/curriculum.md, the single reading list. Covers stack choice, artifact creation order, day-one test seed and the validation gate.
 ---
 
 # Setup: new repo in the model
@@ -11,8 +11,10 @@ apply.
 
 ## Flow
 
-1. **Discover the stack**: language, package manager, and the commands a
-   developer runs (fmt, lint, test, build). If the repo runs services too,
+1. **Discover — or choose — the stack**: language, package manager, and
+   the commands a developer runs (fmt, lint, test, build). In a greenfield
+   repo these are decided, not discovered: choose them first, everything
+   downstream dispatches on them. If the repo runs services too,
    also read [multi-service.md](../model/references/multi-service.md). If
    it has tests, read
    [testing-structure](../../repo-foundations/testing-structure/SKILL.md)
@@ -28,20 +30,25 @@ apply.
 4. **justfile**: `runner` prefix, `image`, `shell`, and one recipe per
    discovered command (thin dispatchers to scripts under `tools/` or
    `scripts/`). Check name collisions before adding recipes.
-5. **Git hooks** (if the repo will have hooks): the wrapper pattern from
+5. **Seed the test suite** (per testing-structure): test directory, live
+   marker deselected by default when external APIs are in play, and one
+   trivially green test — the gate's quality command must run a real
+   suite on day one, not an aspirational one. Every later behavior lands
+   with its test at the cheapest layer that can see it.
+6. **Git hooks** (if the repo will have hooks): the wrapper pattern from
    the model; real logic in a script the wrapper executes in-container.
-6. **AGENTS.md + docs/**: per agent-docs, including `docs/environment.md`
+7. **AGENTS.md + docs/**: per agent-docs, including `docs/environment.md`
    describing this repo's container specifics. If task tracking is wanted,
    install the canonical workflow doc.
-7. **README**: per readme-shape, variant by repo kind.
-8. **`.gitignore`**: local scratch, `.beads/` if task tracking, nothing
+8. **README**: per readme-shape, variant by repo kind.
+9. **`.gitignore`**: local scratch, `.beads/` if task tracking, nothing
    else speculative.
 
 ## Validation gate (must pass before handoff)
 
 ```sh
 just image                # image builds
-just <check>              # the quality command runs IN THE CONTAINER
+just test                 # the suite runs green IN THE CONTAINER
 just shell -c 'exit'      # interactive entry works (or equivalent smoke)
 git commit --allow-empty -m x --dry-run   # hooks resolve if present
 git log --oneline -1      # non-empty: the initial commit exists

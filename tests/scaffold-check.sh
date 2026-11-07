@@ -26,6 +26,12 @@ done
 grep -q "$name/tooling:dev" "$scratch/compose.yml" \
   || { echo "FAIL: image not named $name/tooling:dev"; fail=1; }
 
+# day-one test seed: a test recipe exists and runs a real suite
+grep -qE '^test[[:space:]]*:' "$scratch/justfile" \
+  || { echo "FAIL: no 'test' recipe in justfile"; fail=1; }
+find "$scratch" -name '*test*' -not -path '*/.git/*' | grep -q . \
+  || { echo "FAIL: no test files seeded"; fail=1; }
+
 # tag policy: FROM must be latest or a current major (no EOL pins)
 grep -E '^FROM ' "$scratch/Containerfile" | grep -vE ':(latest|latest-dev|1\.27|3\.24|3\.15|26|10|rawhide)' \
   && { echo "FAIL: FROM pinned to a non-current tag"; fail=1; }

@@ -11,7 +11,9 @@ tooling (a spec repo needs none of this).
 
 ## Core rules
 
-1. **Pyramid, ~70/20/10 unit/contract/integration, e2e ≈ 0 in CI.** Cheap
+1. **Pyramid, ~70/20/10 unit/contract/integration, e2e ≈ 0 in CI** — a
+   direction, not a quota: engineer the ratios only once the suite has
+   mass. Cheap
    tests at the bottom, expensive at the top. Each layer has ONE distinct
    job: unit = pure logic, contract = what goes over the wire (goldens),
    integration = real code against fake inputs, live = real endpoints.

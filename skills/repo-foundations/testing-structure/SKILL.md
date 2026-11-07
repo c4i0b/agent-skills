@@ -11,6 +11,10 @@ tooling (a spec repo needs none of this).
 
 ## Core rules
 
+0. **Test-first, always** — a development-policy rule, restated here
+   because it decides when tests exist: written or adjusted before or with
+   the implementation (see
+   [development-policy](../development-policy/SKILL.md)).
 1. **Pyramid, ~70/20/10 unit/contract/integration, e2e ≈ 0 in CI** — a
    direction, not a quota: engineer the ratios only once the suite has
    mass. Cheap

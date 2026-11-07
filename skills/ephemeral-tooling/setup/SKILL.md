@@ -38,8 +38,9 @@ apply.
 6. **Git hooks** (if the repo will have hooks): the wrapper pattern from
    the model; real logic in a script the wrapper executes in-container.
 7. **AGENTS.md + docs/**: per agent-docs, including `docs/environment.md`
-   describing this repo's container specifics. If task tracking is wanted,
-   install the canonical workflow doc.
+   describing this repo's container specifics and `docs/development.md`
+   seeded from [development-policy](../../repo-foundations/development-policy/SKILL.md).
+   If task tracking is wanted, install the canonical workflow doc.
 8. **README**: per readme-shape, variant by repo kind.
 9. **`.gitignore`**: local scratch, `.beads/` if task tracking, nothing
    else speculative.

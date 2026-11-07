@@ -12,6 +12,9 @@ apply.
    — when the repo has tests; its
    [catalog-and-recorder](../../../repo-foundations/testing-structure/references/catalog-and-recorder.md)
    — when it consumes external APIs
+4b. [development-policy](../../../repo-foundations/development-policy/SKILL.md)
+   — the day-to-day discipline (test-first, cheapest layer, refactor for
+   testability), seeded as the repo's docs/development.md
 5. [base-images.md](base-images.md) — when choosing the FROM (setup) or
    auditing it (migrate)
 6. [multi-service.md](multi-service.md) — when the repo also runs services

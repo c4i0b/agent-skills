@@ -34,6 +34,8 @@ are coding agents pointed at this repo by path.
   and verifying parallel agents and nested CLI sessions
 - `skills/repo-foundations/writing-style` — the prose voice for AGENTS.md,
   docs/ and READMEs
+- `skills/repo-foundations/development-policy` — day-to-day coding
+  discipline, seeded into repos as docs/development.md
 - `skills/ephemeral-tooling/model` — the ephemeral tooling-container model
 - `skills/ephemeral-tooling/setup` — flow: new repo into the model
 - `skills/ephemeral-tooling/migrate` — flow: existing repo into the model

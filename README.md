@@ -21,6 +21,8 @@ skills/
     agent-orchestration/      # parallel subagents, nested CLI sessions,
                               # verify-after-delegate, research campaigns
     writing-style/            # the prose voice for repo artifacts
+    development-policy/       # test-first, cheapest layer, refactor for
+                              # testability: seeded as docs/development.md
   ephemeral-tooling/          # one domain: everything about the container model
     model/                    # the reference (+ references/)
     setup/                    # flow: greenfield repo in the model

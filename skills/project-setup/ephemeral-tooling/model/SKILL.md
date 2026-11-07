@@ -72,6 +72,8 @@ script wherever the toolchain lives — directly inside the container
 
 ## References
 
+- [curriculum.md](references/curriculum.md) — the single reading list both
+  flows start from (and the map of everything this model consumes)
 - [base-images.md](references/base-images.md) — choosing the Containerfile
   base: tooling vs runtime, per-case validated table
 - [multi-service.md](references/multi-service.md) — when the repo also runs

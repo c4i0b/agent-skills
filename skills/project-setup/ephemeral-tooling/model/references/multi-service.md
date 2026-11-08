@@ -7,6 +7,10 @@ ephemeral quality loop and add a dev/runtime split.
 
 - One Containerfile per service with `dev` and `runtime` targets sharing
   the same lockfile, so parity is exact by construction.
+- Keep provenance distinctions in files and profiles, not in image
+  names: a `:dev` tag on a runtime sidecar leaks the dev/prod split
+  into deployment (the sidecar legitimately reuses the tooling image
+  and carries the reference with it).
 - The base compose file declares the runtime; a `compose.override.yml`
   (auto-loaded) points at the `dev` target, bind-mounts the source `:z`,
   and runs as uid 0 for source writes.
@@ -57,6 +61,20 @@ reds below were silent until someone deployed outside the dev laptop.
   registry-safe image plus a declared `build:` — never a profile.
   Misfiling on "uses the dev Containerfile" silently breaks the feature
   it serves.
+- Validate the published file with the deployment target's own parser:
+  run its `compose config` in an ephemeral container — file piped via
+  stdin (a bind mount would resolve on the host when talking to a host
+  engine through a socket), `--network none`, empty environment
+  (`env -i`): the empty environment IS the orchestrated runner. Gate it
+  with the offline suite; skip with a warning when hermetic-only or no
+  container client exists. Validating an artifact with the producer's
+  parser proves nothing about the consumer's: the first run of this
+  check caught two deploy-breakers that months of producer-side
+  validation tolerated (observed: pipoca — compose interpolation ate a
+  literal shell `$i` in a service command, escape as `$$`; and
+  podman-extension volume keys `selinux`/`create_host_path` aborted the
+  target schema — the published file emits spec-clean binds, engine
+  keys stay in the dev variant).
 
 ## Runtime mechanics
 
@@ -70,4 +88,5 @@ reds below were silent until someone deployed outside the dev laptop.
 Validated examples: `finance` (private repo; compose.yml +
 compose.override.yml + services/*/Containerfile), `pipoca` (media
 stack: named-volume state, `compose.host.yaml` opt-in with
-`${STATE_DIR:?}`, sidecar leaf-mounts, profile-gated init).
+`${STATE_DIR:?}`, sidecar leaf-mounts, profile-gated init,
+target-parser gate).

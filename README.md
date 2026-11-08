@@ -16,6 +16,7 @@ skills/
     testing-structure/       # pyramid, cheapest-first, recorded fixtures
     development-policy/      # test-first discipline, seeded into repos
     dependency-bump/         # bump + cheap checks + auto-merge PR (scripts/bump.py)
+    release/                 # plan/prepare/publish with a gated boundary (scripts/release.py)
   agent-workflow/            # how agents work: together and with the user
     agent-orchestration/     # dispatch, discipline, verify-after-delegate
     planning/                # guided decisions, spec convergence, execution

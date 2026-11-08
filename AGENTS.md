@@ -52,7 +52,7 @@ Per category (the rules above define the categories):
 
 - foundations: agent-docs, readme-shape, writing-style
 - dev-discipline: testing-structure, development-policy,
-  dependency-bump
+  dependency-bump, release
 - agent-workflow: agent-orchestration, planning
 - project-setup: ephemeral-tooling (the model reference plus setup and
   migrate flows)

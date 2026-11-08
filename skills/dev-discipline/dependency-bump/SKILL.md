@@ -58,6 +58,19 @@ minimal base that covers the need (19 MB).
    completion — if protection changed after arming, re-run the merge
    command to re-arm. Without auto-merge enabled the script leaves the
    PR open and says so.
+   Repo setup checklist (all default-off, each has blocked a real run):
+   - branch protection: CI check required, no required reviews
+   - repo Settings: Allow auto-merge, else `--auto` does not arm
+   - repo Settings: Allow GitHub Actions to create and approve pull
+     requests (red: GraphQL "GitHub Actions is not permitted to create
+     and approve pull requests")
+   Running the bump from Actions with the default `GITHUB_TOKEN`: events
+   it creates do not trigger workflows, so branch CI never runs and
+   `--auto` never merges (red: PR armed, checks `[]` forever, merge
+   never fired). Either give the job a workflow-triggering credential
+   (PAT or App) or run the full gate inside the job itself and merge
+   explicitly. In that second mode remove the required check from
+   protection, else it blocks the very merge it was meant to guarantee.
 5. Scripts must stay environment-agnostic (see
    [ci-bypass.md](../../project-setup/ephemeral-tooling/model/references/ci-bypass.md)):
    `bump.py` derives nothing from container-only paths.
@@ -98,5 +111,11 @@ goes to the run output (there is no PR to edit — nothing landed).
   worktree dirty for inspection (nothing committed, nothing pushed).
 - Codename and untracked tags are reported for manual review, never
   rewritten (exception: Debian codenames map to the current number,
-  suffix preserved — `bookworm-slim` → `13-slim`).
+  suffix preserved — `bookworm-slim` → `13-slim`). Non-numeric tags on
+  non-debian families are never rewritten either (red:
+  `rust:slim-bookworm` became `rust:1.99`, losing the slim variant and
+  pinning the major).
+- A floating major with a variant suffix (`rust:1-slim`) is current,
+  not a finding: recurring review-by-hand noise on the recommended
+  form erodes trust in the report.
 - Lockfile churn with zero version moves is reverted, never PRed.

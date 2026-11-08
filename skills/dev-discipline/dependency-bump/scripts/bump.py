@@ -98,6 +98,20 @@ def current_tag(family: str, tag: str) -> str:
     return CURRENT[family]
 
 
+def standard(family: str, tag: str) -> bool:
+    """Standard current form, plus the tag's own variant suffix.
+
+    A floating major with a variant (rust:1-slim) is current, not a
+    finding: weekly review-by-hand noise on the form the tag policy
+    itself recommends erodes trust in the report."""
+    mjr = CURRENT[family].split(".")[0]
+    ok = {CURRENT[family], f"{CURRENT[family]}-slim", mjr}
+    mo = MAJOR_ONLY.match(tag)
+    if mo and mo.group("rest").startswith("-"):
+        ok.add(mjr + mo.group("rest"))
+    return tag in ok
+
+
 # Image family by last path segment (digit-stripped: ubi9 -> ubi; the
 # version can live in the repo name, not the tag).
 def family_of(ref: str) -> str | None:
@@ -164,6 +178,13 @@ def fix_image_tags(root: Path, dry: bool) -> tuple[list[str], list[tuple], bool]
             orig_tag = tag
             if codename:
                 tag = tag.replace(codename, DEBIAN_CODENAMES[codename], 1)
+            if not tag[:1].isdigit():
+                # non-numeric tag on a non-debian family: report, never
+                # rewrite (red: rust:slim-bookworm was rewritten to
+                # rust:1.99, losing the slim variant and pinning the major)
+                findings.append(f"{name}:{i + 1}: {ref}:{orig_tag} "
+                                "non-numeric tag - review by hand")
+                continue
             family = family_of(ref)
             if family is None or family not in CURRENT:
                 # report only image-shaped refs: explicit tag or registry
@@ -181,8 +202,7 @@ def fix_image_tags(root: Path, dry: bool) -> tuple[list[str], list[tuple], bool]
                     lines[i] = line.replace(f"{ref}:{orig_tag}",
                                             f"{ref}:{new}")
                     changed = True
-            elif tag not in (CURRENT[family], f"{CURRENT[family]}-slim",
-                             CURRENT[family].split(".")[0]):
+            elif not standard(family, tag):
                 findings.append(f"{name}:{i + 1}: {ref}:{tag} non-standard "
                                 f"for {family} (current: {CURRENT[family]}) - "
                                 "review by hand")

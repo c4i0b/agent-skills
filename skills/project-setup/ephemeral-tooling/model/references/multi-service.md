@@ -74,7 +74,10 @@ reds below were silent until someone deployed outside the dev laptop.
   literal shell `$i` in a service command, escape as `$$`; and
   podman-extension volume keys `selinux`/`create_host_path` aborted the
   target schema — the published file emits spec-clean binds, engine
-  keys stay in the dev variant).
+  keys stay in the dev variant). The gate proves parsing and
+  interpolation — never pullability: a registry-safe name that was never
+  pushed passes config and fails the deploy exactly the same way, so
+  pushing images is part of the release, not of this gate.
 
 ## Runtime mechanics
 

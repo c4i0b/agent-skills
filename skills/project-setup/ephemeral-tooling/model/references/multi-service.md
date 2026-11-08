@@ -21,15 +21,20 @@ ephemeral quality loop and add a dev/runtime split.
 
 ## The published deployment
 
-Everything in this section is one class: something that exists only in
-the developer's session (HOME paths, per-mount habits, socket mounts,
-local-only image names) leaking into the published artifact. All four
-reds below were silent until someone deployed outside the dev laptop.
+Invariant: **a production service is self-contained** — everything it
+needs at runtime ships in its image or in named volumes; nothing may
+come from the developer's session (environment variables, engine
+quirks, local image names, the repository checkout). Each rule below
+was found the hard way: one real deploy failing per leak (all observed
+in pipoca). Validating an artifact with the producer's parser proves
+nothing about the consumer's.
 
-- Runtime state (service config, data) defaults to named volumes in the
-  base compose file; host bind storage is an opt-in through one env var
-  (e.g. `STATE_DIR`). A path in the published compose file must never
-  default to `${HOME}` or any host-session variable: orchestrated
+### State
+
+- Runtime state (service config, data) defaults to named volumes in
+  the base compose file; host bind storage is an opt-in through one env
+  var (e.g. `STATE_DIR`). A path in the published compose file must
+  never default to `${HOME}` or any host-session variable: orchestrated
   runners (CI, container-management UIs) interpolate the file where
   those are unset and the path silently collapses to `/` (observed:
   pipoca — every service bind-mounted from `/`, `create_host_path: true`
@@ -47,6 +52,9 @@ reds below were silent until someone deployed outside the dev laptop.
   files (stamps) their own small volume. Observed in pipoca: a stamp
   written into an anonymous dir vanished on restart and the curation
   loop re-fired weekly.
+
+### Service set
+
 - A service that cannot run on a plain Docker host — container-engine
   socket binds, repo-checkout binds, `localhost/` image refs — sits
   behind a compose `profile` (e.g. `dev`); plain `up` then deploys only
@@ -61,23 +69,39 @@ reds below were silent until someone deployed outside the dev laptop.
   registry-safe image plus a declared `build:` — never a profile.
   Misfiling on "uses the dev Containerfile" silently breaks the feature
   it serves.
+
+### Code
+
+- Runtime code reaches a production service only through its image:
+  bake what the entrypoint needs — COPY of the code dirs plus every
+  data file the code loads at boot (observed: pipoca — a sidecar
+  crash-looped on the deploy host with `can't open
+  /project/scripts/...`; its code arrived through a repo bind, and a
+  web-editor deploy ships no repo). The dev bind stays as a mount over
+  the same path, SHADOWING the baked copy — live editing keeps working,
+  one image, one recipe, no dev/prod split — but the service must start
+  and run with the bind absent. Gate: no non-dev service carries a
+  relative bind source in the published compose file, and the image
+  recipe COPYs the runtime code dirs (both cheap text asserts).
+
+### Validation
+
 - Validate the published file with the deployment target's own parser:
   run its `compose config` in an ephemeral container — file piped via
   stdin (a bind mount would resolve on the host when talking to a host
   engine through a socket), `--network none`, empty environment
   (`env -i`): the empty environment IS the orchestrated runner. Gate it
   with the offline suite; skip with a warning when hermetic-only or no
-  container client exists. Validating an artifact with the producer's
-  parser proves nothing about the consumer's: the first run of this
-  check caught two deploy-breakers that months of producer-side
-  validation tolerated (observed: pipoca — compose interpolation ate a
-  literal shell `$i` in a service command, escape as `$$`; and
-  podman-extension volume keys `selinux`/`create_host_path` aborted the
-  target schema — the published file emits spec-clean binds, engine
-  keys stay in the dev variant). The gate proves parsing and
-  interpolation — never pullability: a registry-safe name that was never
-  pushed passes config and fails the deploy exactly the same way, so
-  pushing images is part of the release, not of this gate.
+  container client exists. First run of this check caught two
+  deploy-breakers that months of producer-side validation tolerated
+  (observed: pipoca — compose interpolation ate a literal shell `$i` in
+  a service command, escape as `$$`; and podman-extension volume keys
+  `selinux`/`create_host_path` aborted the target schema — the
+  published file emits spec-clean binds, engine keys stay in the dev
+  variant). The gate proves parsing and interpolation — never
+  pullability: a registry-safe name that was never pushed passes config
+  and fails the deploy exactly the same way, so pushing images is part
+  of the release, not of this gate.
 
 ## Runtime mechanics
 
@@ -92,4 +116,4 @@ Validated examples: `finance` (private repo; compose.yml +
 compose.override.yml + services/*/Containerfile), `pipoca` (media
 stack: named-volume state, `compose.host.yaml` opt-in with
 `${STATE_DIR:?}`, sidecar leaf-mounts, profile-gated init,
-target-parser gate).
+self-contained sidecar image, target-parser gate).

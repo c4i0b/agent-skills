@@ -26,8 +26,8 @@ needs at runtime ships in its image or in named volumes; nothing may
 come from the developer's session (environment variables, engine
 quirks, local image names, the repository checkout). Each rule below
 was found the hard way: one real deploy failing per leak (all observed
-in pipoca). Validating an artifact with the producer's parser proves
-nothing about the consumer's.
+in a private media stack). Validating an artifact with the producer's
+parser proves nothing about the consumer's.
 
 ### State
 
@@ -37,7 +37,7 @@ nothing about the consumer's.
   never default to `${HOME}` or any host-session variable: orchestrated
   runners (CI, container-management UIs) interpolate the file where
   those are unset and the path silently collapses to `/` (observed:
-  pipoca — every service bind-mounted from `/`, `create_host_path: true`
+  a private media stack — every service bind-mounted from `/`, `create_host_path: true`
   made it root-owned; compose validated fine, containers started).
 - Interpolation cannot switch `type:` — the env var selects a FILE: the
   default compose (named volumes) plus a host-storage variant passed via
@@ -49,7 +49,7 @@ nothing about the consumer's.
   (a downloader writing what another service hardlinks or moves).
 - A sidecar that needs the whole state tree cannot nest named volumes:
   mount the leaf volumes at their subpaths and give root-level state
-  files (stamps) their own small volume. Observed in pipoca: a stamp
+  files (stamps) their own small volume. Observed in a private media stack: a stamp
   written into an anonymous dir vanished on restart and the curation
   loop re-fired weekly.
 
@@ -59,7 +59,7 @@ nothing about the consumer's.
   socket binds, repo-checkout binds, `localhost/` image refs — sits
   behind a compose `profile` (e.g. `dev`); plain `up` then deploys only
   what the target can run, and the dev flow enables the profile
-  (observed: pipoca/Portainer — an init service mounting the podman
+  (observed: the same media stack via a container UI — an init service mounting the podman
   socket and a sidecar pinned to `localhost/` broke a deployment whose
   production services were all fine).
 - Classify services by role, not by image: a sidecar built FROM the
@@ -74,7 +74,7 @@ nothing about the consumer's.
 
 - Runtime code reaches a production service only through its image:
   bake what the entrypoint needs — COPY of the code dirs plus every
-  data file the code loads at boot (observed: pipoca — a sidecar
+  data file the code loads at boot (observed: the same stack — a sidecar
   crash-looped on the deploy host with `can't open
   /project/scripts/...`; its code arrived through a repo bind, and a
   web-editor deploy ships no repo). The dev bind stays as a mount over
@@ -94,7 +94,7 @@ nothing about the consumer's.
   with the offline suite; skip with a warning when hermetic-only or no
   container client exists. First run of this check caught two
   deploy-breakers that months of producer-side validation tolerated
-  (observed: pipoca — compose interpolation ate a literal shell `$i` in
+  (observed: the same stack — compose interpolation ate a literal shell `$i` in
   a service command, escape as `$$`; and podman-extension volume keys
   `selinux`/`create_host_path` aborted the target schema — the
   published file emits spec-clean binds, engine keys stay in the dev
@@ -113,7 +113,7 @@ nothing about the consumer's.
   env knob.
 
 Validated examples: `finance` (private repo; compose.yml +
-compose.override.yml + services/*/Containerfile), `pipoca` (media
-stack: named-volume state, `compose.host.yaml` opt-in with
+compose.override.yml + services/*/Containerfile), a private media
+stack (named-volume state, `compose.host.yaml` opt-in with
 `${STATE_DIR:?}`, sidecar leaf-mounts, profile-gated init,
 self-contained sidecar image, target-parser gate).

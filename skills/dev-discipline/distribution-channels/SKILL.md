@@ -31,12 +31,12 @@ mechanisms. Per-channel knowledge lives in
 3. Channel automation can ship before the channel account exists: gate
    the workflow on a repo variable, default off, and arm it when the
    account does.
-4. Bump flows own the channel-hash fix: when token events leave the
-   PR gate blind, the bump workflow regenerates the hash itself with
-   a fail-closed tool (real builder loop, restore on abort) — never a
-   blind rewrite — see the
-   [dependency-bump](../dependency-bump/SKILL.md)
-   rail.
+4. Prefer release-pinned channels (version and hashes in one
+   expression, advanced by the release event): no hash can go stale
+   between releases by construction, so no bump flow ever owns a
+   channel fix. Rolling-main channels are the exception — they are
+   CI-gated by necessity, and their bump flow must carry the hash fix
+   itself when token events leave the PR gate blind.
 
 ## CI-as-gate
 

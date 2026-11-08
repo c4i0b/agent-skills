@@ -119,11 +119,10 @@ goes to the run output (there is no PR to edit — nothing landed).
   not a finding: recurring review-by-hand noise on the recommended
   form erodes trust in the report.
 - Lockfile churn with zero version moves is reverted, never PRed.
-- In a repo with a content-hashed distribution channel, a lockfile
-  bump can invalidate the channel hash. Token-driven bump events do
-  not trigger the PR's CI, so the gate cannot fire: the bump workflow
-  itself must carry the fix — a dedicated fail-closed hash-regen tool
-  run on the bump branch whenever the lockfile changed (never a regex
-  rewrite: the tool loops the real builder to the correct hash and
-  restores the original on abort). See
-  [distribution-channels](../distribution-channels/SKILL.md).
+- Distribution channels: a release-pinned channel (the default — see
+  [distribution-channels](../distribution-channels/SKILL.md)) is
+  bump-neutral: its pin advances only at the release event, so a
+  lockfile bump never invalidates a channel hash. A rolling-main
+  channel's hashes can be invalidated by a bump, and token-driven
+  bump events do not trigger the PR's CI — there the bump workflow
+  itself must carry a fail-closed hash regen, never a regex rewrite.

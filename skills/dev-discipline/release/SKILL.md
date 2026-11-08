@@ -85,5 +85,6 @@ package.json, and every publish refusal exercised: no `--yes`, dirty
 tree, no CI evidence, existing tag). First real repo: topmatic (Rust
 CLI, Nov 2026) — plan/prepare/publish plus the channel layer (AUR
 workflow on `release: published`, nixpkgs PR — later closed on the
-new-package maturity gate, see the nix reference — and flake CI gate)
-validated with real container builds.
+new-package maturity gate, see the nix reference — and a
+release-pinned Nix channel, initially CI-gated rolling) validated
+with real container builds.

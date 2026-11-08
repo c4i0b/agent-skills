@@ -38,34 +38,54 @@ users, not on packaging quality.
   validation box masks it). Nix-specific: makepkg on Arch always has
   `/bin`.
 
-## Repo flake
+## Release-pinned repo package (flake + default.nix shims)
 
-- Derive the version from the manifest (e.g. Cargo.toml); never keep a
-  second copy in sync by hand.
-- Ship a root `default.nix` compat shim alongside the flake — it is
-  what the nixpkgs reviewer asks of upstream repos, and it is cheap:
-  `callPackages` the same `nix/package.nix`, resolve nixpkgs from
-  flake.lock (rev + narHash via `fetchTarball`), pass `src =
-  builtins.path` with a filter excluding `target`/`.git`/`result`,
-  read the version from the manifest. Zero duplicated logic; non-
-  flake users get `nix-build` and `nix-shell -p (import ./.)`.
-- The flake's `cargoHash` is content-derived: dependency bumps change
-  it, version-only releases do not (while main's lockfile still
-  matches the release tag). It can legitimately differ from the
-  nixpkgs package's hash when main has drifted past the tag — two
-  hashes, two purposes, do not unify them.
-- Enforcement is CI-as-gate (see the
-  [SKILL.md](../SKILL.md)): a CI job builds the flake. The fix is
-  owned by the flow that causes the drift: a stdlib hash-regen script
-  — mismatch loop, idempotent no-op when the hash is already correct,
-  original hash restored on any abort — that the bump workflow runs
-  on its branch whenever the lockfile changed (token events do not
-  trigger PR CI, so a gate there never fires; red: a token-driven
-  bump auto-merged with a stale hash and zero red checks). Red: under
-  `set -o pipefail` the expected-failing `nix build` kills the
-  hash-capture pipeline — capture with `|| true`, then refuse to use
-  an empty hash. The interactive recipe survives as a manual escape
-  hatch only.
+One expression owns the whole pinned package; the flake and a root
+`default.nix` are thin callPackage shims over it.
+
+- `nix/package.nix` carries version, `src = fetchFromGitHub { tag =
+  "v${version}"; hash = ...; }` (the fetcher, never `fetchurl` on
+  archive bytes) and `cargoHash`. The shims pin nixpkgs from
+  flake.lock, so non-flake users need no channel.
+- Why pinned over rolling (`src = self` on main): version-only
+  releases AND dependency bumps need nothing (the lockfile the hash
+  derives from only changes at release time) — no hash can go stale
+  between releases by construction; users never receive unreleased
+  main (red, observed under rolling: the `release: vX` commit was
+  visible to the channel before the tag existed); the tag/main
+  lockfile-drift hash divergence cannot happen. Rolling's machinery
+  (CI-gated hash, regen-on-bump) dissolves — do not keep it
+  alongside.
+- The release event advances the channel: on `release: published`,
+  checkout main, guard `prerelease == false`, verify the tagged
+  manifest matches the tag, then `nix-update <pkg> --flake
+  --version=<v> --override-filename nix/package.nix --build`, commit
+  `nix: update <pkg> to v<v>` to main. nix-update owns version,
+  source hash and cargoHash, mismatch loop included — no hand-rolled
+  regen script. Do not couple flake.lock updates to releases.
+- Gotchas (red then green):
+  - nix-update spawns `nix-instantiate` without inheriting CLI
+    experimental flags: `--extra-experimental-features` on the outer
+    `nix run` is not enough (eval dies: "experimental Nix feature
+    'flakes' is disabled"). Fix: `NIX_CONFIG: "experimental-features
+    = nix-command flakes"` as workflow env, which subprocesses
+    inherit.
+  - Pinning retroactively changes test behavior: the channel builds
+    the TAG's source, so the tag's test suite becomes the channel's
+    suite — upstream test fixes only reach the channel at the next
+    release (red: a test fix landed after the previous tag; the
+    pinned checkPhase failed in every sandbox while main CI was
+    green). Interim: `checkFlags = [ "--skip" <test> ]` with a
+    drop-after-next-release comment.
+  - nix-update without `--flake` imports the target as an attrset and
+    fails confusingly ("attempt to call something which is not a
+    function but a set") when `default.nix` returns a derivation
+    directly — always pass `--flake` (it evaluates
+    `packages.<system>.<attr>` even with `--override-filename`).
+- Boundary consequence: the channel is fully downstream, same tier
+  as the AUR workflow — the release event advances it, and CI's only
+  job is keeping the expression honest on main (a cheap
+  paths-filtered build of both entry points).
 
 ## NUR (community registry)
 
@@ -90,16 +110,16 @@ flake and nixpkgs in the ladder above.
   checklist (all checked) plus a short bullet list; `./bin/nur
   format-manifest` must produce zero diff — run it before claiming
   that checkbox.
-- The dedicated repo stays tiny forever: evaluate upstream main,
-  never copy expressions — `fetchGit` the upstream repo, callPackage
-  its `nix/package.nix`, read the version from the manifest at
-  evaluation time. The single source of truth stays upstream, and
-  the dedicated repo never changes per release. Pinning upstream
-  tags with hashes reintroduces per-release bump automation in a
-  second repository — avoid it unless a channel consumer demands
-  determinism. This requires upstream to ship a self-contained
-  package expression, which the reviewer-recommended root
-  `default.nix` shim provides anyway.
+- The dedicated repo stays tiny forever: evaluate upstream, never
+  copy expressions — `fetchGit` the upstream repo and callPackage its
+  `nix/package.nix`; with upstream release-pinned, that transparently
+  delivers released versions only. The single source of truth stays
+  upstream, and the dedicated repo never changes per release. Pinning
+  upstream tags with hashes in the NUR repo reintroduces per-release
+  bump automation in a second repository — avoid it unless a consumer
+  demands determinism. This requires upstream to ship a
+  self-contained package expression, which the root `default.nix`
+  shim provides anyway.
 - NUR evaluates the default branch HEAD; the community CI caches
   builds. The only maintenance is a green main — exactly what the
   CI-as-gate job proves — so release tooling needs zero NUR
@@ -130,10 +150,11 @@ podman run --rm -v "$PWD":/src:Z docker.io/nixos/nix \
   personal accelerator, never a dependency.
 - Bind mounts trip nix's lazy re-hash when the flow writes between
   builds: read-only validation (build checks) is fine on a bind
-  mount, but write-between-builds flows (the hash-regen loop) must
-  copy the repo to container fs first — red: virtiofs mtime behavior
-  plus nix's dirty-worktree hashing fails with "contents have changed
-  during evaluation" on a legitimately-written `nix/package.nix`.
+  mount, but write-between-builds flows (any updater that edits the
+  expression between two builds) must copy the repo to container fs
+  first — red: virtiofs mtime behavior plus nix's dirty-worktree
+  hashing fails with "contents have changed during evaluation" on a
+  legitimately-written `nix/package.nix`.
 - Validate against a pinned channel (nixos-unstable), not master HEAD
   — red: a dependency at master HEAD was missing from cache.nixos.org
   with a broken local build.

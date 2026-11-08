@@ -36,3 +36,12 @@ of paraphrasing them.
   relabeled onto wrong keys: ordering, counts, telescoping products,
   relative levels. Cannot detect relabeling bugs
   (testing-structure rule 6).
+- **distribution channel** — a surface a repo ships to beyond its
+  tag/registry (a distro or community package, an app store, a repo
+  flake). Every channel is downstream, CI-gated, or manual-first;
+  which channels exist and their states live in the repo's channel
+  inventory, like tag policy (distribution-channels).
+- **CI-as-gate** — enforcing an invariant by adding it to branch CI
+  instead of teaching the release script, so the publish gate's
+  exact-SHA CI check fail-closes on it. Used for content-derived
+  channel hashes (distribution-channels).

@@ -47,3 +47,8 @@ condition — the change that would reopen it.
 - **Third-party AGENTS.md linters as gates** (agents-md-doctor, agnix) —
   external deps against the self-contained gate philosophy; our checks
   encode OUR conventions. Revisit if a linter allows full config of ours.
+- **Channel automation inside the release script** — channels with
+  content-derived hashes join branch CI (CI-as-gate); the rest trigger
+  downstream from the publish event. Per-channel logic multiplies the
+  script's surface for checks CI already proves. Revisit when a
+  channel exists that branch CI cannot build.

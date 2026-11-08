@@ -17,6 +17,7 @@ skills/
     development-policy/      # test-first discipline, seeded into repos
     dependency-bump/         # bump + cheap checks + auto-merge PR (scripts/bump.py)
     release/                 # plan/prepare/publish with a gated boundary (scripts/release.py)
+    distribution-channels/   # shipping beyond the tag: boundary model + references/ per channel
   agent-workflow/            # how agents work: together and with the user
     agent-orchestration/     # dispatch, discipline, verify-after-delegate
     planning/                # guided decisions, spec convergence, execution
@@ -55,4 +56,6 @@ Built only when a real validated example exists:
   tests (seams, ports, injection); a dedicated skill waits for a second
   real validated use
 - readme-shape variants for libraries
+- distribution-channels references for further ecosystems (deb/rpm,
+  flatpak, app stores) — ship when a real repo ships there
 - a drift-review flow (does this repo still follow the model?)

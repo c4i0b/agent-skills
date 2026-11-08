@@ -119,3 +119,9 @@ goes to the run output (there is no PR to edit — nothing landed).
   not a finding: recurring review-by-hand noise on the recommended
   form erodes trust in the report.
 - Lockfile churn with zero version moves is reverted, never PRed.
+- In a repo with a content-hashed distribution channel, a lockfile
+  bump can invalidate the channel hash: keep the channel build in
+  branch CI (CI-as-gate) so the bump PR itself fails closed, and fix
+  the hash in that PR — bump scripts never rewrite channel hashes
+  (see
+  [distribution-channels](../distribution-channels/SKILL.md)).

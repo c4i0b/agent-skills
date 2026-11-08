@@ -1,12 +1,14 @@
 ---
 name: release
-description: Agent-driven releases. Three stages with one publishing boundary. plan is a read-only JSON planner, prepare bumps version files and changelog reversibly, publish runs the irreversible steps gated fail-closed on clean tree, release commit and exact-SHA CI. Use when cutting a release in any repo.
+description: Agent-driven releases. Three stages with one publishing boundary. plan is a read-only JSON planner, prepare bumps version files and changelog reversibly, publish runs the irreversible steps gated fail-closed on clean tree, release commit and exact-SHA CI. Use when cutting a release in any repo; repos shipping to packaging channels also read the distribution-channels skill.
 ---
 
 # Release (plan, prepare, publish)
 
-A flow, not knowledge: tag policy and version conventions live in the
-repo being released. Like
+A flow, not knowledge: tag policy, version conventions and the
+channel inventory live in the repo being released; channel mechanisms
+live in
+[distribution-channels](../distribution-channels/SKILL.md). Like
 [dependency-bump](../dependency-bump/SKILL.md): the agent decides what
 the release means, the script decides what is permitted, CI proves it
 is safe.
@@ -25,7 +27,14 @@ is safe.
   forward with a new version, never retag or rewrite. A failed GitHub
   Release keeps the tag: create the release manually on it.
 - Verify after publish: the exit code of `gh release create` is not
-  the end, `gh release view` confirms the state.
+  the end, `gh release view` confirms the state — and the downstream
+  channel tail (a channel workflow triggered by the release) is
+  verified to have run, not assumed (verify-after-delegate).
+- Distribution channels never grow the script: each is downstream
+  (driven by the publish event or external automation), CI-gated (its
+  build is part of branch CI, so the exact-SHA gate fail-closes on a
+  stale hash), or manual-first and outside the boundary — see
+  [distribution-channels](../distribution-channels/SKILL.md).
 - Credentials are env-injected into the container (`GH_TOKEN`,
   registry tokens), never baked and never in argv (see the
   ephemeral-tooling
@@ -39,7 +48,10 @@ is safe.
 2. `release.py plan --bump minor` (or `major`, `patch`, `X.Y.Z`): the
    agent reads the JSON state (current version, target tag, changelog
    section present, tree clean) and decides the bump from what users
-   will see, not from commit labels alone.
+   will see, not from commit labels alone. Repos with a channel
+   inventory get the same read: the agent classifies each channel —
+   downstream (nothing to do), CI-gated (act only if CI is red),
+   manual-first or blocked (report, never automate around).
 3. The agent writes the changelog section content (keep-a-changelog
    sections, human wording). The script only validates that the
    section exists: `## [Unreleased]` becomes `## [X.Y.Z] - date` at
@@ -59,7 +71,10 @@ is safe.
 - `--dry-run` equivalent is `plan`: it mutates nothing.
 - Registry publishing (cargo, npm, pypi) is deliberately out of the
   script: it ships only when a real repo needs it, as a data table in
-  the style of dependency-bump's updaters.
+  the style of dependency-bump's updaters. Channel publishing is
+  likewise out: channels are downstream or CI-gated, and the manual
+  tails are documented, not automated
+  ([distribution-channels](../distribution-channels/SKILL.md)).
 - Version files without a semver `version` field stop the flow with
   the file named, never a guess.
 
@@ -67,5 +82,7 @@ is safe.
 
 Scratch demo (`plan` read-only, `prepare` across Cargo.toml +
 package.json, and every publish refusal exercised: no `--yes`, dirty
-tree, no CI evidence, existing tag). First real repo release upgrades
-this entry.
+tree, no CI evidence, existing tag). First real repo: topmatic (Rust
+CLI, Nov 2026) — plan/prepare/publish plus the channel layer (AUR
+workflow on `release: published`, nixpkgs PR, flake CI gate) validated
+with real container builds.

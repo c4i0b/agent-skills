@@ -31,9 +31,10 @@ mechanisms. Per-channel knowledge lives in
 3. Channel automation can ship before the channel account exists: gate
    the workflow on a repo variable, default off, and arm it when the
    account does.
-4. Bump scripts never rewrite channel hashes either: a stale hash
-   fails the bump PR's own CI (CI-as-gate) and is fixed in that PR —
-   see the
+4. Bump flows own the channel-hash fix: when token events leave the
+   PR gate blind, the bump workflow regenerates the hash itself with
+   a fail-closed tool (real builder loop, restore on abort) — never a
+   blind rewrite — see the
    [dependency-bump](../dependency-bump/SKILL.md)
    rail.
 
@@ -45,7 +46,13 @@ fail-closes on it. The natural fit is content-derived hashes (vendor
 and dependency hashes, source checksums): they go stale in specific,
 predictable ways, and CI already builds the artifact that proves them.
 What CI cannot build (an external review queue, a store submission)
-cannot be CI-gated: it is manual-first by definition.
+cannot be CI-gated: it is manual-first by definition. And the gate is
+blind on branches whose events do not trigger workflows (token-driven
+automation): there the rule inverts — the automation that causes the
+drift must carry the fix itself, on its own branch, before merging
+(red: a token-driven bump PR auto-merged with a stale channel hash
+and zero red checks, because neither the PR's events nor the merge
+triggered CI).
 
 ## Validation environments
 
@@ -70,5 +77,5 @@ until a real repo ships there.
 | Channel | Reference | Validated in |
 |---|---|---|
 | AUR | [references/aur.md](references/aur.md) | topmatic (Nov 2026) |
-| Nix (nixpkgs + repo flake) | [references/nix.md](references/nix.md) | topmatic (Nov 2026) |
+| Nix (nixpkgs + flake + NUR) | [references/nix.md](references/nix.md) | topmatic (Nov 2026) |
 | COPR | [references/copr.md](references/copr.md) | fedora-packages (Nov 2026) |

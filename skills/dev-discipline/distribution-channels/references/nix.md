@@ -3,6 +3,13 @@
 Two distinct channels: the upstream nixpkgs package and the repo's own
 flake. Validated in topmatic (Rust CLI, Nov 2026).
 
+Channel ladder for a project without adoption (users beyond the
+owner): repo flake first (canonical from day one) → NUR, the
+community registry with no maturity gate — the nixpkgs reviewer's own
+suggested stepping stone → nixpkgs once adoption justifies it. Submit
+upstream when there is someone to serve; the ladder is climbed on
+users, not on packaging quality.
+
 ## nixpkgs upstream package
 
 - The gate is project maturity, not packaging quality — red: a fully

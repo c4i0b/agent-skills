@@ -29,3 +29,10 @@ of paraphrasing them.
   (base-images keeps the list).
 - **seam-ready** — code shaped so behaviors can be tested at the cheapest
   layer: factories, ports, injection. The goal of refactor-for-testability.
+- **same-brain oracle** — an expected value derived by the same mental
+  model as the implementation (typically hand-computed); certifies bugs
+  instead of catching them (testing-structure rule 5).
+- **shift-invariant assertion** — one that still passes when values are
+  relabeled onto wrong keys: ordering, counts, telescoping products,
+  relative levels. Cannot detect relabeling bugs
+  (testing-structure rule 6).

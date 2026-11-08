@@ -163,16 +163,27 @@ def cmd_prepare(root: Path, part: str) -> None:
             rx = next(rx for n, rx in VERSION_FILES if n == f.name)
             f.write_text(rx.sub(f'\\g<1>{proposed}\\g<2>', text, count=1))
     ch = root / "CHANGELOG.md"
-    if ch.is_file():
+    dated = ""
+    if not ch.is_file():
+        sys.exit("abort: no CHANGELOG.md. Release notes come from its "
+                 "sections (keep-a-changelog)")
+    text = ch.read_text()
+    if f"## [{proposed}]" in text:
+        dated = f"section ## [{proposed}] already present"
+    elif "## [Unreleased]" in text:
         today = datetime.date.today().isoformat()
-        ch.write_text(ch.read_text().replace(
+        ch.write_text(text.replace(
             "## [Unreleased]", f"## [{proposed}] - {today}", 1))
+        dated = f"changelog section dated {today}"
+    else:
+        sys.exit(f"abort: CHANGELOG.md has neither ## [Unreleased] "
+                 f"nor ## [{proposed}]. Write the section first "
+                 "(keep-a-changelog, user-visible wording)")
     git(root, "add", "-A")
     r = git(root, "commit", "-m", f"release: v{proposed}")
     if r.returncode != 0:
         sys.exit(f"abort: release commit failed: {r.stderr.strip()}")
-    print(f"prepared v{proposed} ({len(files)} version files, "
-          f"changelog section dated)")
+    print(f"prepared v{proposed} ({len(files)} version files, {dated})")
 
 
 def ci_green_on(root: Path, sha: str) -> tuple[bool, str]:

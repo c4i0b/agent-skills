@@ -1,6 +1,6 @@
 ---
 name: testing-structure
-description: Structure a repo's test suite. Test pyramid with coverage without overlap, cheapest-test-first, refactoring code to enable cheap tests (modularity as a consequence), offline by default with live/API layers opt-in. Includes the recorded-fixtures catalog/recorder technique for repos consuming external APIs. Use when creating or reworking a test suite.
+description: Structure a repo's test suite. Test pyramid with coverage without overlap, cheapest-test-first, refactoring code to enable cheap tests (modularity as a consequence), offline by default with live/API layers opt-in. Oracle quality (independent-path expected values, value-attributed assertions for keyed series). Includes the recorded-fixtures catalog/recorder technique for repos consuming external APIs. Use when creating or reworking a test suite.
 ---
 
 # Testing structure
@@ -48,8 +48,31 @@ tooling (a spec repo needs none of this).
    run pins nothing. Where realism matters (upstream library shapes), feed
    recorded data, never hand-crafted "realistic" payloads: a crafted
    payload encodes what we THINK upstream returns, which is exactly what
-   we are wrong about.
-6. **Repo consumes external APIs?** Read
+   we are wrong about. Realism extends to derived data: a crafted input
+   sequence (e.g. returns fed to a math kernel) is a crafted payload.
+   - **same-brain oracle** (anti-pattern): an expected value hand-computed
+     by the implementation's author follows the same mental model as the
+     code and certifies its bugs — test-first becomes mutual confirmation,
+     not verification. For numeric kernels derive the oracle through an
+     independent path: apply the inverse operation (forward-chain from
+     returns to test a reverse-chain from prices), or feed recorded real
+     data and compare by key. Red: finance quant kernel bridging synthetic
+     bars with the wrong proxy return; the hand-computed literal used the
+     same wrong date convention as the code, its comment narrating the bug
+     as intended behavior.
+6. **Assert value-attributed invariants, not only shift-invariant ones.**
+   Ordering, counts, telescoping products and relative levels are
+   **shift-invariant**: they still pass when values are relabeled onto the
+   wrong keys (dates, ids). Every transform that produces or reshapes a
+   keyed series gets at least one assertion binding an output value to its
+   key, with explicit attention at seams (synthetic-to-real boundaries,
+   composition joins). If the series has a downstream consumer, one test
+   consumes it as the consumer does (compare by key against the series'
+   own inputs) — that is a distinct behavior from the transform's math,
+   not overlap under rule 2. Red: an entire finance suite green under a
+   one-day relabeling of returns; the covariance consumer silently
+   misaligned by one trading day against the rest of the universe.
+7. **Repo consumes external APIs?** Read
    [catalog-and-recorder.md](references/catalog-and-recorder.md): record
    once into a versioned fixture library, derive every layer from it,
    refresh on dependency bumps (not the calendar).
@@ -59,4 +82,7 @@ tooling (a spec repo needs none of this).
 `finance/docs/yfinance-service/testing-strategy.md` and
 `fixtures.md` (private repo) — the full pyramid, markers config, durability classes and
 recorder in production use, including the bugs the realism rule caught
-(NaN tails, non-dict metadata, calendar divergence between exchanges).
+(NaN tails, non-dict metadata, calendar divergence between exchanges),
+and an oracle-contamination bug (off-by-one synthetic-history bridge
+certified by a same-brain oracle, every assertion shift-invariant —
+the red behind rules 5 and 6).

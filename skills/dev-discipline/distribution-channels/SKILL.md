@@ -51,7 +51,11 @@ cannot be CI-gated: it is manual-first by definition.
 
 Validate each channel where its users live, in a throwaway
 container-based environment, then discard it; full recreate recipes
-are repo-level (the repo's docs/). The recurring shape: distro
+are repo-level (the repo's docs/). These are instances of the
+[ephemeral-tooling
+model](../../project-setup/ephemeral-tooling/model/SKILL.md): the
+host stays clean, the environment is disposable, and privileged
+escapes (mock) get a dedicated service. The recurring shape: distro
 container + the channel's own build tool + `--nodeps`-style escapes
 for dependencies the local resolver cannot see. Channel-specific
 gotchas (sandbox masks, cache gaps, expected-warning noise) live in
@@ -67,3 +71,4 @@ until a real repo ships there.
 |---|---|---|
 | AUR | [references/aur.md](references/aur.md) | topmatic (Nov 2026) |
 | Nix (nixpkgs + repo flake) | [references/nix.md](references/nix.md) | topmatic (Nov 2026) |
+| COPR | [references/copr.md](references/copr.md) | fedora-packages (Nov 2026) |

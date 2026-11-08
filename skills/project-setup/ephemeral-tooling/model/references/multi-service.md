@@ -24,7 +24,8 @@ ephemeral quality loop and add a dev/runtime split.
 Invariant: **a production service is self-contained** — everything it
 needs at runtime ships in its image or in named volumes; nothing may
 come from the developer's session (environment variables, engine
-quirks, local image names, the repository checkout). Each rule below
+quirks, local image names, the repository checkout, the host's network
+position). Each rule below
 was found the hard way: one real deploy failing per leak (all observed
 in a private media stack). Validating an artifact with the producer's
 parser proves nothing about the consumer's.
@@ -69,6 +70,13 @@ parser proves nothing about the consumer's.
   registry-safe image plus a declared `build:` — never a profile.
   Misfiling on "uses the dev Containerfile" silently breaks the feature
   it serves.
+- Work performed by a dev-only service must have a production path: a
+  dev-only init doing first-boot wiring (credentials, desired state)
+  leaves the deployment applying none of it (observed: a fresh stack
+  came up answering 401 for the documented default credentials). Ship
+  the wiring as a one-shot service in the DEFAULT deployment running
+  the same idempotent scripts from the baked image — re-runs converge,
+  so dev and prod can both run it.
 
 ### Code
 
@@ -81,8 +89,29 @@ parser proves nothing about the consumer's.
   the same path, SHADOWING the baked copy — live editing keeps working,
   one image, one recipe, no dev/prod split — but the service must start
   and run with the bind absent. Gate: no non-dev service carries a
-  relative bind source in the published compose file, and the image
-  recipe COPYs the runtime code dirs (both cheap text asserts).
+  relative bind source in the published compose file, the image recipe
+  COPYs the runtime code dirs, and an offline (`--network none`)
+  container imports the entrypoint — the read graph (config/manifest
+  files loaded at boot, not just code) ships or the import fails.
+
+### Networking
+
+- Prefer the bridge with published ports in the published compose file:
+  host networking is an engine/host-specific optimization, not a
+  portable default. On a remote host, host-network traffic terminates
+  ON the host, so the host firewall filters it — while published bridge
+  ports go through the engine's DNAT, which host firewalls do not
+  (observed: same file, opposite reachability per service — the
+  host-network WebUI unreachable from the LAN, every published bridge
+  port fine). Keep host networking in the dev/engine variant, and
+  document there which engine quirk it works around (e.g. rootless
+  podman breaking UDP/DHT on the bridge) so the variant stays
+  justifiable.
+- Reach services by env-overridable URL, never a hardcoded localhost:
+  the dev runner sits on the host network; a bridge-network production
+  runner reaches services by name and sometimes a different port. URL
+  hardcoding is the same leak class as a `${HOME}` default — fine in
+  the dev session, wrong on the target.
 
 ### Validation
 

@@ -43,8 +43,11 @@ grep -qE '^test([[:space:]]+[^:]*)?[[:space:]]*:' "$scratch/justfile" \
 find "$scratch" -name '*test*' -not -path '*/.git/*' | grep -q . \
   || { echo "FAIL: no test files seeded"; fail=1; }
 
-# tag policy: FROM must be latest or a current major (no EOL pins)
-grep -E '^FROM ' "$scratch/Containerfile" | grep -vE ':(latest|latest-dev|1\.27|3\.24|3\.15|26|10|rawhide)' \
+# tag policy: FROM must be latest, a floating major (with optional
+# variant), or a whitelisted current minor (no EOL pins, no codenames).
+# Red: scaffold had to avoid base-images' own generic recommendations
+# (debian:stable-slim, python:3-alpine) to satisfy the old whitelist.
+grep -E '^FROM ' "$scratch/Containerfile" | grep -vE ':(latest|latest-dev|rawhide|stable-slim|[0-9]+(-[a-z0-9.-]*)?|(1\.27|3\.24|3\.15|26|10)(-[a-z0-9.-]*)?)$' \
   && { echo "FAIL: FROM pinned to a non-current tag"; fail=1; }
 
 [ "$fail" -eq 0 ] && echo "scaffold check: ALL CHECKS PASSED"

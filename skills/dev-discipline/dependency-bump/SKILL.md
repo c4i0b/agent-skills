@@ -24,8 +24,8 @@ revert churn, or the flow erodes trust with no-op PRs).
 
 ## Tooling base (validated)
 
-`cgr.dev/chainguard/wolfi-base` + `apk add git python-3.15 gh` —
-validated Nov 2026 (git 2.56, Python 3.15.2, gh 2.103.3). The package is
+`cgr.dev/chainguard/wolfi-base` + `apk add git python-3 gh` —
+validated Nov 2026. The package is
 `gh`, NOT `github-cli` (does not exist in wolfi). glibc means the native
 updaters' prebuilt binaries run. Per base-images.md rule 4 this is the
 minimal base that covers the need (19 MB).

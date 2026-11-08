@@ -77,5 +77,5 @@ until a real repo ships there.
 | Channel | Reference | Validated in |
 |---|---|---|
 | AUR | [references/aur.md](references/aur.md) | topmatic (Nov 2026) |
-| Nix (nixpkgs + flake + NUR) | [references/nix.md](references/nix.md) | topmatic (Nov 2026) |
+| Nix (nixpkgs + repo package + NUR) | [references/nix.md](references/nix.md) | topmatic (Nov 2026) |
 | COPR | [references/copr.md](references/copr.md) | fedora-packages (Nov 2026) |

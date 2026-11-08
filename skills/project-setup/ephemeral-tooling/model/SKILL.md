@@ -53,8 +53,11 @@ deterministic environments, safe parallelism, zero idle cost.
   `PROJECT_DIRECT=1`) lets CI run recipes directly.
 - `just image` builds the image and does one-time host setup (git hooks
   path); idempotent, layer-cached, near-instant unless a layer changed.
-- `just shell` for interactive work. Recipe logic lives in scripts; the
-  justfile stays a dispatcher.
+- `just shell` for interactive work. Recipe logic lives in `tools/`
+  (both validated repos share this; skills ship script sources in
+  their own `scripts/` and install them into the repo's `tools/`).
+  `scripts/` in a repo is for application-support scripts the app
+  itself runs, never just recipes. The justfile stays a dispatcher.
 
 **git hooks** — wrapper pattern: `.githooks/pre-commit` runs the real hook
 script wherever the toolchain lives — directly inside the container

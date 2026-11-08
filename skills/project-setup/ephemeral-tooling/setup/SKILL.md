@@ -30,8 +30,8 @@ apply.
 3. **compose.yml**: the `tooling` service per the model (user 0:0, `:z`
    mount, ephemeral HOME).
 4. **justfile**: `runner` prefix, `image`, `shell`, and one recipe per
-   discovered command (thin dispatchers to scripts under `tools/` or
-   `scripts/`). Check name collisions before adding recipes.
+   discovered command (thin dispatchers to scripts under `tools/`).
+   Check name collisions before adding recipes.
 5. **Seed the test suite** (per testing-structure): test directory, live
    marker deselected by default when external APIs are in play, and one
    trivially green test — the gate's quality command must run a real

@@ -53,5 +53,7 @@ Two audiences, two artifacts:
 
 ## Validated examples
 
-- `fedora-packages` (AGENTS.md 49 lines + thematic docs)
-- `finance` (AGENTS.md + per-service docs + ADRs)
+- [`fedora-packages`](https://github.com/c4i0b/fedora-packages)
+  (AGENTS.md 49 lines + thematic docs)
+- `finance` (private repo)
+  (AGENTS.md + per-service docs + ADRs)

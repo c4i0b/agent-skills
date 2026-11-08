@@ -43,8 +43,11 @@ Pick by repo kind, or ask when ambiguous:
 - [service-app.md](references/service-app.md) — an app or service stack
 - [package-monorepo.md](references/package-monorepo.md) — a monorepo
   shipping packages for a package manager
+- [cli-tool.md](references/cli-tool.md) — a CLI tool shipped to users
 
 ## Validated examples
 
-- `fedora-packages/README.md` (package monorepo)
-- `finance/README.md` (service app)
+- [`fedora-packages/README.md`](https://github.com/c4i0b/fedora-packages)
+  (package monorepo)
+- `finance/README.md` (service app, private repo)
+- [`topmatic/README.md`](https://github.com/c4i0b/topmatic) (CLI tool)

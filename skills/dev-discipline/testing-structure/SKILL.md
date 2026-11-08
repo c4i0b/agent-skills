@@ -39,7 +39,7 @@ tooling (a spec repo needs none of this).
      binary that silently self-degrades when it is absent (`if
      !tool_exists() { return; }`, or a stub fallback inside the code
      under test). Red: a suite of 287 green while its validation path
-     was never exercised; every such test guarded on the missing binary
+     was never exercised. Every such test guarded on the missing binary
      except one, and that one caught the bug. A missing binary at test
      time means exactly one of two things: Containerfile bug (bake it)
      or live dependency (explicit marker). Never probe-and-return.
@@ -57,6 +57,6 @@ tooling (a spec repo needs none of this).
 ## Validated example
 
 `finance/docs/yfinance-service/testing-strategy.md` and
-`fixtures.md` — the full pyramid, markers config, durability classes and
+`fixtures.md` (private repo) — the full pyramid, markers config, durability classes and
 recorder in production use, including the bugs the realism rule caught
 (NaN tails, non-dict metadata, calendar divergence between exchanges).

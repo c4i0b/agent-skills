@@ -65,12 +65,12 @@ script wherever the toolchain lives — directly inside the container
 - Recipe names: check for collisions before adding (an `image`-build recipe
   named `build` collided with an existing `build <name>` recipe).
 - Repo toolchain file (rust-toolchain.toml, mise.toml, .tool-versions):
-  it selects a toolchain by NAME; components installed into the image
-  default do not satisfy it (observed: rustup components landed on the
-  image's 1.99 while the file asked for stable; the first clippy run
-  auto-downloaded ~150 MB at runtime; the Containerfile looked complete
-  and was not). Fix: run the toolchain manager's install from the repo
-  directory so it reads the file, then add components.
+  it selects a toolchain by NAME, and components installed into the
+  image default do not satisfy it. Red: rustup components landed on
+  the image's 1.99 while the file asked for stable. The first clippy
+  run auto-downloaded ~150 MB at runtime. The Containerfile looked
+  complete and was not. Fix: run the toolchain manager's install from
+  the repo directory so it reads the file, then add components.
 - Tools needing real privilege: a rootless container without capabilities
   cannot grant them — mock, for example, is known-broken unprivileged
   (needs CAP_SYS_ADMIN for tmpfs/proc mounts) and requires a
@@ -82,9 +82,9 @@ script wherever the toolchain lives — directly inside the container
   bus lives on the host. All three traps observed:
   - create `/run/systemd/system`: systemctl checks sd_booted() first and
     answers offline without ever trying the socket
-  - bind-mount only the bus socket FILE, never the runtime dir: as uid 0
-    sd_bus prefers systemd/private and the handshake fails ENODATA; the
-    single-file mount forces the session-bus fallback
+  - bind-mount only the bus socket FILE, never the runtime dir: as
+    uid 0 sd_bus prefers systemd/private and the handshake fails
+    ENODATA. The single-file mount forces the session-bus fallback
   - `security_opt: ["label=disable"]`: SELinux blocks the socket
     otherwise
 - The justfile runner prefix executes commands in the container: verify
@@ -105,6 +105,8 @@ script wherever the toolchain lives — directly inside the container
   base: tooling vs runtime, per-case validated table
 - [multi-service.md](references/multi-service.md) — when the repo also runs
   services (dev/runtime targets, override file)
+- [credentials.md](references/credentials.md) — how credentials reach the
+  container (or stay host-side)
 
 The quality loop stays hermetic when the suite is offline-by-default —
 see [testing-structure](../../../dev-discipline/testing-structure/SKILL.md)
@@ -113,5 +115,7 @@ for the suite-side of that contract.
 
 ## Validated examples
 
-- `fedora-packages` — single tooling container
-- `finance` — tooling + service containers
+- [`fedora-packages`](https://github.com/c4i0b/fedora-packages) — single
+  tooling container
+- `finance` (private repo) — tooling + service
+  containers

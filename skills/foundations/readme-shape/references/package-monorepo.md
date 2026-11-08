@@ -16,4 +16,5 @@ For a repo that builds packages consumed through a package manager.
   build, status command.
 - Adding a package: numbered steps, ending with the manual-bump command.
 
-Validated example: `fedora-packages/README.md`.
+Validated example:
+[`fedora-packages/README.md`](https://github.com/c4i0b/fedora-packages).

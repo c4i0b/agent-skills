@@ -11,4 +11,4 @@ choices, trade-offs), record it as an ADR instead of burying it in a comment.
   rejected — do not reintroduce without discussion"): the negative space is
   what prevents re-litigating.
 
-Validated example: `finance/docs/decisions/`.
+Validated example: `finance/docs/decisions/` (private repo).

@@ -53,7 +53,5 @@ Built only when a real validated example exists:
   testing-structure rule that code must be refactored to enable cheap
   tests (seams, ports, injection); a dedicated skill waits for a second
   real validated use
-- readme-shape variants for CLI tools and libraries
-- a credentials reference for the ephemeral-tooling model
+- readme-shape variants for libraries
 - a drift-review flow (does this repo still follow the model?)
-- distribution via `npx skills add` (structure is compatible)

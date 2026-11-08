@@ -37,7 +37,8 @@ grep -qE '[a-z0-9_-]+/tooling:dev' "$scratch/compose.yml" \
   || { echo "FAIL: image not named <project>/tooling:dev"; fail=1; }
 
 # day-one test seed: a test recipe exists and runs a real suite
-grep -qE '^test[[:space:]]*:' "$scratch/justfile" \
+# (recipe may carry args: "test *args:" failed the old ^test\s*: grep)
+grep -qE '^test([[:space:]]+[^:]*)?[[:space:]]*:' "$scratch/justfile" \
   || { echo "FAIL: no 'test' recipe in justfile"; fail=1; }
 find "$scratch" -name '*test*' -not -path '*/.git/*' | grep -q . \
   || { echo "FAIL: no test files seeded"; fail=1; }

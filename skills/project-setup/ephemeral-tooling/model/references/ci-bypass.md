@@ -17,5 +17,5 @@ runner := `[ "${PROJECT_DIRECT:-}" = 1 ] || printf 'podman compose run --rm tool
   where the compose working_dir provides them in both modes — and prefer
   deriving paths from the script location instead).
 
-Validated example: `fedora-packages`
+Validated example: [`fedora-packages`](https://github.com/c4i0b/fedora-packages)
 (`FEDORA_PACKAGES_DIRECT=1` in `.github/workflows/validate.yml`).

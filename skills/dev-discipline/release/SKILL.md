@@ -84,5 +84,6 @@ Scratch demo (`plan` read-only, `prepare` across Cargo.toml +
 package.json, and every publish refusal exercised: no `--yes`, dirty
 tree, no CI evidence, existing tag). First real repo: topmatic (Rust
 CLI, Nov 2026) — plan/prepare/publish plus the channel layer (AUR
-workflow on `release: published`, nixpkgs PR, flake CI gate) validated
-with real container builds.
+workflow on `release: published`, nixpkgs PR — later closed on the
+new-package maturity gate, see the nix reference — and flake CI gate)
+validated with real container builds.

@@ -77,6 +77,15 @@ parser proves nothing about the consumer's.
   the wiring as a one-shot service in the DEFAULT deployment running
   the same idempotent scripts from the baked image — re-runs converge,
   so dev and prod can both run it.
+- When dev and production reach a service through different networks,
+  credential bootstrap that leans on the service's own first-boot
+  mechanism is suspect: upstream hardening increasingly scopes those
+  mechanisms to loopback, and the bridge-network production runner is
+  not loopback (observed: qBittorrent-style ≥5 hardening — the
+  host-network dev runner never noticed). The robust pattern: the
+  service sets its own credential through its API, executed from inside
+  its own container via the engine CLI (`exec`) — same network position
+  as the service, zero topology assumptions.
 
 ### Code
 
@@ -131,6 +140,22 @@ parser proves nothing about the consumer's.
   pullability: a registry-safe name that was never pushed passes config
   and fails the deploy exactly the same way, so pushing images is part
   of the release, not of this gate.
+- A deployment contract is proven only by a COLD deployment of the
+  published artifact: wipe state, bring the stack up exactly as the
+  target would, assert the documented first-boot outcomes (e.g. default
+  credentials answer 2xx on every service). Static validation — even
+  the target's own parser — proves syntax and structure, never
+  referential integrity (an env URL naming a container that does not
+  exist), code-graph completeness, or runtime acceptance (observed:
+  five first-boot defects on one cold run, each invisible to every
+  static gate — a readiness loop on a wrong service name, an import of
+  a moved module only the production path still called, boot-time data
+  files never baked, an engine socket mounted off the client's expected
+  path, and upstream first-boot credentials scoped to loopback that a
+  bridge-network runner cannot use). Pyramid slot: above the parser
+  contract, below live site probes. The producer's green is not the
+  consumer's green — on a second axis now: not just whose parser, but
+  whose boot.
 
 ## Runtime mechanics
 

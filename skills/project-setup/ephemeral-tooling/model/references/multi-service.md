@@ -136,10 +136,20 @@ parser proves nothing about the consumer's.
   a service command, escape as `$$`; and podman-extension volume keys
   `selinux`/`create_host_path` aborted the target schema — the
   published file emits spec-clean binds, engine keys stay in the dev
-  variant). The gate proves parsing and interpolation — never
-  pullability: a registry-safe name that was never pushed passes config
-  and fails the deploy exactly the same way, so pushing images is part
-  of the release, not of this gate.
+  variant). The spec and the fleet drift independently — a key the
+  compose spec allows can still be rejected by the target's (older)
+  engine or CLI, so "the spec allows it" is not "the fleet accepts it"
+  (observed: a `required: false` bind flag that the validator's own
+  compose version rejected). The gate proves parsing and interpolation —
+  never pullability: a registry-safe name that was never pushed passes
+  config and fails the deploy exactly the same way. A multi-host
+  artifact needs a published home: CI publishes the image to a registry
+  tagged by commit, the published compose references the registry ref,
+  and `build:` stays as the offline fallback — the pull-vs-build choice
+  leaves the deployer's checklist. And a deployment report that does
+  not name the exact commit or image digest it exercised cannot
+  distinguish "bug" from "stale deploy" (observed: a deploy cut one fix
+  behind main re-suffered defects already fixed and regression-tested).
 - A deployment contract is proven only by a COLD deployment of the
   published artifact: wipe state, bring the stack up exactly as the
   target would, assert the documented first-boot outcomes (e.g. default
@@ -165,6 +175,16 @@ parser proves nothing about the consumer's.
 - Healthchecks must not assume a binary (no curl in minimal images): a
   python -c urllib one-liner works; point it at the dev venv path via an
   env knob.
+- A healthcheck answers "can this container serve its purpose in
+  isolation" — never the availability of an external system. A check
+  that curls content depending on an upstream site flips container
+  health on an upstream outage, and orchestrated platforms answer by
+  restarting, alerting at, or replacing a perfectly healthy container
+  (observed: a maintenance sidecar flagged unhealthy while its loop ran
+  fine — the upstream returned 403). External dependencies (upstream
+  sites, third-party APIs, datasets that populate asynchronously)
+  belong in monitoring. Gate: no healthcheck command fails on an HTTP
+  error status alone (e.g. `curl -s`, not `-sf`).
 
 Validated examples: `finance` (private repo; compose.yml +
 compose.override.yml + services/*/Containerfile), a private media

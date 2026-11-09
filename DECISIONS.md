@@ -26,13 +26,6 @@ condition — the change that would reopen it.
 - **beads as a shared, committed `.beads/`** — personal-local choice:
   state is never committed or synced unless explicitly asked. Revisit only
   if cross-machine task sync becomes a real need.
-- **Splitting multi-service.md (or a references/ subdirectory)** — the
-  deployment-contract section is ~70% of the file but has exactly one
-  kind of consumer (multi-service repos); 173 lines is within reference
-  size for one coherent variant (base-images holds 143 unsplit), and no
-  skill uses reference subdirectories. Strip when a non-multi-service
-  consumer of the deployment contract appears — then extract
-  `deployment-contract.md`.
 - **mock in the unprivileged tooling container with an isolation flag
   only** — known-broken without capabilities. Privileged dedicated service
   is the upstream-documented fix. Strip if mock ships a rootless mode.

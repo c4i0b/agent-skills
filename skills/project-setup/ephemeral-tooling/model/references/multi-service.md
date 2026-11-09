@@ -81,7 +81,7 @@ parser proves nothing about the consumer's.
   credential bootstrap that leans on the service's own first-boot
   mechanism is suspect: upstream hardening increasingly scopes those
   mechanisms to loopback, and the bridge-network production runner is
-  not loopback (observed: qBittorrent-style ≥5 hardening — the
+  not loopback (observed: a torrent client's security hardening — the
   host-network dev runner never noticed). The robust pattern: the
   service sets its own credential through its API, executed from inside
   its own container via the engine CLI (`exec`) — same network position

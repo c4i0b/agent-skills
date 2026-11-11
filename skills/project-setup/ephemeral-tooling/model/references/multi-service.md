@@ -82,7 +82,10 @@ parser proves nothing about the consumer's.
   came up answering 401 for the documented default credentials). Ship
   the wiring as a one-shot service in the DEFAULT deployment running
   the same idempotent scripts from the baked image — re-runs converge,
-  so dev and prod can both run it.
+  so dev and prod can both run it. Order it with the dependency
+  mechanism, never sleeps: `depends_on` with
+  `condition: service_healthy` on what it wires, and consumers waiting
+  on it via `condition: service_completed_successfully`.
 - When dev and production reach a service through different networks,
   credential bootstrap that leans on the service's own first-boot
   mechanism is suspect: upstream hardening increasingly scopes those
@@ -138,7 +141,11 @@ parser proves nothing about the consumer's.
   run its `compose config` in an ephemeral container — file piped via
   stdin (a bind mount would resolve on the host when talking to a host
   engine through a socket), `--network none`, empty environment
-  (`env -i`): the empty environment IS the orchestrated runner. Gate it
+  (`env -i`): the empty environment IS the orchestrated runner. Pin
+  the provider: `podman compose` is a wrapper whose provider varies by
+  what is installed (docker-compose takes precedence when present) —
+  the same command on two machines can run different parsers; invoke
+  the concrete provider or set `PODMAN_COMPOSE_PROVIDER`. Gate it
   with the offline suite; skip with a warning when hermetic-only or no
   container client exists. First run of this check caught two
   deploy-breakers that months of producer-side validation tolerated

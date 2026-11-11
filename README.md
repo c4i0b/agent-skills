@@ -59,3 +59,15 @@ Built only when a real validated example exists:
 - distribution-channels references for further ecosystems (deb/rpm,
   flatpak, app stores) — ship when a real repo ships there
 - a drift-review flow (does this repo still follow the model?)
+- **operational-reliability rules for multi-service** (research-backed,
+  awaiting their first observed red here): restart/shutdown semantics
+  (`stop_grace_period`, deliberate restart policy; one-shots must not
+  inherit long-running restart), resource limits, bounded logging
+  (json-file never rotates by default), backup/restore contract (a
+  named volume is not a backup; deploy → state → backup → destroy →
+  restore → assert), recreation/upgrade test, secret rotation, image
+  pruning policy, UID/GID/SELinux ownership contract for rootless +
+  binds, rollback compatibility. Community practice is consolidated
+  (docker/skills, the magnus919 compose skill's production baseline,
+  the k8s startup/liveness/readiness probe model) — each enters the
+  model when a deployment of ours burns on it

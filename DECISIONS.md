@@ -26,6 +26,12 @@ condition — the change that would reopen it.
 - **beads as a shared, committed `.beads/`** — personal-local choice:
   state is never committed or synced unless explicitly asked. Revisit only
   if cross-machine task sync becomes a real need.
+- **Inlining community-endorsed operational rules ahead of a local
+  red** (restart policies, log rotation, backups, resource limits —
+  the 2026 compose-skills survey lists them all as P0): our rules are
+  red-green by identity; consolidated practice earns a Candidates
+  entry with a trigger, not a rule. Strip when a deployment of ours
+  observes the failure each rule would prevent.
 - **mock in the unprivileged tooling container with an isolation flag
   only** — known-broken without capabilities. Privileged dedicated service
   is the upstream-documented fix. Strip if mock ships a rootless mode.

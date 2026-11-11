@@ -7,6 +7,12 @@ ephemeral quality loop and add a dev/runtime split.
 
 - One Containerfile per service with `dev` and `runtime` targets sharing
   the same lockfile, so parity is exact by construction.
+- Topology differences belong to thin per-topology runners; knowledge
+  belongs to the shared script. Runners (dev vs production compose
+  targets) carry only what actually differs — network mode, engine
+  socket, service addresses — while every logic and wiring step lives
+  in one script both execute. This is the shape behind every dev/prod
+  split in this file.
 - Keep provenance distinctions in files and profiles, not in image
   names: a `:dev` tag on a runtime sidecar leaks the dev/prod split
   into deployment (the sidecar legitimately reuses the tooling image
@@ -82,10 +88,14 @@ parser proves nothing about the consumer's.
   mechanism is suspect: upstream hardening increasingly scopes those
   mechanisms to loopback, and the bridge-network production runner is
   not loopback (observed: a torrent client's security hardening — the
-  host-network dev runner never noticed). The robust pattern: the
-  service sets its own credential through its API, executed from inside
-  its own container via the engine CLI (`exec`) — same network position
-  as the service, zero topology assumptions.
+  host-network dev runner never noticed). The robust pattern: first-boot
+  wiring talks to each service's API and NEVER writes its config files —
+  internal config formats are non-contracts the next version may break
+  (observed: a hand-computed password hash in the service's ini was
+  silently normalized away at boot). When upstream scopes a bootstrap
+  credential to loopback, execute that wiring inside the target's own
+  container via the engine CLI (`exec`) — the service sets its own
+  secret through its API, merely originated from localhost.
 
 ### Code
 
@@ -141,12 +151,18 @@ parser proves nothing about the consumer's.
   engine or CLI, so "the spec allows it" is not "the fleet accepts it"
   (observed: a `required: false` bind flag that the validator's own
   compose version rejected). The gate proves parsing and interpolation —
-  never pullability: a registry-safe name that was never pushed passes
-  config and fails the deploy exactly the same way. A multi-host
-  artifact needs a published home: CI publishes the image to a registry
-  tagged by commit, the published compose references the registry ref,
-  and `build:` stays as the offline fallback — the pull-vs-build choice
-  leaves the deployer's checklist. And a deployment report that does
+  never pullability: a name that was never reachable passes config and
+  fails the deploy exactly the same way. Distribution follows the
+  deployment method: a registry is justified only when hosts cannot
+  build from the repository (no build context, e.g. web-editor deploys)
+  or when identical builds must run on several hosts — for a single
+  host that clones and builds, a local tag plus `build:` IS the
+  distribution (observed: a registry adopted then reverted — it added
+  CI, package visibility and credentials with no host needing pull;
+  revert to a registry the moment a build-context-less host appears).
+  The repo-build path is viable at all because the image is
+  self-contained — the bake rule is what makes the registry optional,
+  not redundant. And a deployment report that does
   not name the exact commit or image digest it exercised cannot
   distinguish "bug" from "stale deploy" (observed: a deploy cut one fix
   behind main re-suffered defects already fixed and regression-tested).

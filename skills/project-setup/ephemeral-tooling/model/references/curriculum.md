@@ -18,7 +18,10 @@ Read in order; skip conditionals that do not apply.
    testability), seeded as the repo's docs/development.md
 5. [base-images.md](base-images.md) — when choosing the FROM (setup) or
    auditing it (migrate)
-6. [multi-service.md](multi-service.md) — when the repo also runs services
+6. [multi-service.md](multi-service.md) — when the repo also runs
+   services (dev/runtime split), then
+   [deployment-contract.md](deployment-contract.md) — what a published
+   deployment must guarantee
 7. [credentials.md](credentials.md) — when wiring tokens, keys or any
    credential into the model
 8. [ci-bypass.md](ci-bypass.md) — when recipes must also run in CI

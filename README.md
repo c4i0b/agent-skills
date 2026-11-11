@@ -47,6 +47,18 @@ what order. Reference skills hold the knowledge.
 
 Built only when a real validated example exists:
 
+- **operational-reliability rules** (research-backed, no red observed
+  in our repos yet — the list waits for incidents): explicit restart
+  policy per production service (one-shots distinct from long-running),
+  `stop_grace_period`/shutdown semantics, resource limits (`mem_limit`,
+  `cpus`, `pids_limit`), log rotation (bounded `logging` options or the
+  `local` driver — json-file does not rotate by default), backup AND
+  restore-test contract for named volumes (a volume is not a backup),
+  secret rotation procedure distinct from bootstrap, UID/GID/SELinux
+  ownership contract for rootless engines, rollback/recreation test
+  (deploy → state → recreate without volume loss → upgrade), and a
+  healthcheck sidecar sharing the app's netns for distroless runtimes
+
 - **reliability evals** (multi-run smoke: 3 scaffolds, all green, measuring
   variance. Trigger: when a flow or model reference changes shape, or when
   the skill count doubles. The single-run gate covers structure, not
@@ -59,15 +71,3 @@ Built only when a real validated example exists:
 - distribution-channels references for further ecosystems (deb/rpm,
   flatpak, app stores) — ship when a real repo ships there
 - a drift-review flow (does this repo still follow the model?)
-- **operational-reliability rules for multi-service** (research-backed,
-  awaiting their first observed red here): restart/shutdown semantics
-  (`stop_grace_period`, deliberate restart policy; one-shots must not
-  inherit long-running restart), resource limits, bounded logging
-  (json-file never rotates by default), backup/restore contract (a
-  named volume is not a backup; deploy → state → backup → destroy →
-  restore → assert), recreation/upgrade test, secret rotation, image
-  pruning policy, UID/GID/SELinux ownership contract for rootless +
-  binds, rollback compatibility. Community practice is consolidated
-  (docker/skills, the magnus919 compose skill's production baseline,
-  the k8s startup/liveness/readiness probe model) — each enters the
-  model when a deployment of ours burns on it

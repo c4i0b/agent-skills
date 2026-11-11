@@ -107,8 +107,10 @@ script wherever the toolchain lives — directly inside the container
 - [base-images.md](references/base-images.md) — choosing the Containerfile
   base: tooling vs runtime, per-case validated table
 - [multi-service.md](references/multi-service.md) — when the repo also
-  runs services (dev/runtime split, published-deployment rules, runtime
-  mechanics)
+  runs services: dev/runtime split and runtime mechanics
+- [deployment-contract.md](references/deployment-contract.md) — the
+  published deployment: state, service set, code, networking and the
+  validation ladder (parser gate, cold deploy, release identity)
 - [credentials.md](references/credentials.md) — how credentials reach the
   container (or stay host-side)
 

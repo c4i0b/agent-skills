@@ -123,5 +123,7 @@ for the suite-side of that contract.
 
 - [`fedora-packages`](https://github.com/c4i0b/fedora-packages) — single
   tooling container
+- `topmatic` (private repo) — single tooling container, plus the
+  dependency-bump and release skills composed on top
 - `finance` (private repo) — tooling + service
   containers

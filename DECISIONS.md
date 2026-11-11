@@ -26,6 +26,14 @@ condition — the change that would reopen it.
 - **beads as a shared, committed `.beads/`** — personal-local choice:
   state is never committed or synced unless explicitly asked. Revisit only
   if cross-machine task sync becomes a real need.
+- **Source in named volumes / sync layers instead of the repo bind** —
+  the bind's cost is visible and reclaimable (build artifacts inside
+  the gitignored repo dir); sync-based alternatives trade it for
+  silent host/container divergence (the edited file is not the tested
+  file) and break host-side IDE indexing. Per-project exceptions (tiny
+  disk, externally synced repo dirs, monorepo-scale artifacts) stay
+  project decisions. Strip if a real repo hits bind pain the exceptions
+  cannot absorb.
 - **mock in the unprivileged tooling container with an isolation flag
   only** — known-broken without capabilities. Privileged dedicated service
   is the upstream-documented fix. Strip if mock ships a rootless mode.

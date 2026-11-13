@@ -18,7 +18,9 @@ conventions here are the model-independent core.
    mode-644 script.
 3. **Bound every job with `timeout-minutes`** sized for hangs, not for
    legitimate slow runs (quick checks ~5–15, full validation ~90): an
-   unbounded hang burns a runner for six hours.
+   unbounded hang burns a runner for six hours. Red: a 15-package batch
+   delivery exceeded a per-step budget sized for single-package pushes
+   and died half-delivered.
 4. **Serialize same-purpose workflows** with a `concurrency` group and
    `cancel-in-progress: true` when runs are idempotent (scheduled
    bumpers); `false` when each run carries work the next would drop

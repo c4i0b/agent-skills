@@ -25,6 +25,15 @@ finance repo.
 5. **Explicit over implicit.** Declare effects at the boundary. Validate
    degenerate inputs before third-party math.
 6. **Dead code is deleted**, never commented out.
+7. **Fixes outlive the incident.** A fix valid only until the next upstream
+   bump is unfinished: one definition per repeated constant, derive what
+   upstream controls (metadata, globs) instead of restating it, and
+   match-driven edits (seds, selectors) fail loud when the pattern drifts —
+   a silent no-op is a deferred failure.
+8. **Class knowledge lives in shared artifacts.** The lesson goes where
+   the next consumer inherits it — the repo's docs or templates — never as
+   a fix-local comment; and check the siblings: one member's fix usually
+   applies to the whole family.
 
 ## Seeding (setup flow)
 

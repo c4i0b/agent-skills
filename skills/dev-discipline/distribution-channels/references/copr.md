@@ -36,7 +36,9 @@ the publish gate.
   its package directory. Empty commits trigger nothing.
 - Pushes made with `GITHUB_TOKEN` trigger the COPR webhook but do NOT
   re-trigger GitHub Actions workflows (the inverse of the usual
-  direction).
+  direction). Token pushes therefore skip the repo's validation
+  while still building — bot bumps are gated before merge, never
+  pushed direct (gh-actions-conventions).
 - Webhook is push events only, `application/json`, from COPR
   Settings → Integrations.
 - Register a new package with the project before pushing, or the

@@ -26,20 +26,19 @@ condition — the change that would reopen it.
 - **beads as a shared, committed `.beads/`** — personal-local choice:
   state is never committed or synced unless explicitly asked. Revisit only
   if cross-machine task sync becomes a real need.
-- **Source in named volumes / sync layers instead of the repo bind** —
-  the bind's cost is visible and reclaimable (build artifacts inside
-  the gitignored repo dir); sync-based alternatives trade it for
-  silent host/container divergence (the edited file is not the tested
-  file) and break host-side IDE indexing. Per-project exceptions (tiny
-  disk, externally synced repo dirs, monorepo-scale artifacts) stay
-  project decisions. Strip if a real repo hits bind pain the exceptions
-  cannot absorb.
 - **mock in the unprivileged tooling container with an isolation flag
   only** — known-broken without capabilities. Privileged dedicated service
   is the upstream-documented fix. Strip if mock ships a rootless mode.
 - **Versioned-tag pinning as default** — latest-first policy: freshness
   beats pinning by default. Pinning is the exception, verified-current.
   Strip if reproducible-build requirements land.
+- **Direct-to-main bot version bumps in packaging repos** — token
+  pushes skip the repo's validation workflow while delivery still
+  fires, so the builder is the first (and most expensive) observer
+  of a bad bump. Bumps pass a gate before main (gh-actions-conventions
+  rule 11). Strip if a bump class provably has no failure observable
+  below the builder, or a gate-in-job-before-push flow is validated
+  somewhere first.
 - **Renovate for autoupdate** — rejected in fedora-packages before this
   repo existed. Do not reintroduce without discussion. Strip on upstream
   needs changing fundamentally.

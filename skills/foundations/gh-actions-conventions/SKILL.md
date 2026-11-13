@@ -1,6 +1,6 @@
 ---
 name: gh-actions-conventions
-description: GitHub Actions conventions for repos in this family. Pinned action SHAs, bash-invoked scripts, concurrency groups, the push-retry dance, [skip ci] semantics, GITHUB_TOKEN event suppression escape hatches, job time bounds, workflow naming by pipeline role, and the bash-vs-python script split. Use when writing or reviewing workflows for a repo that follows these conventions.
+description: GitHub Actions conventions for repos in this family. Pinned action SHAs, bash-invoked scripts, concurrency groups, the push-retry dance, [skip ci] semantics, GITHUB_TOKEN event suppression escape hatches, gate-before-main for bot commits on gated paths, job time bounds, workflow naming by pipeline role, and the bash-vs-python script split. Use when writing or reviewing workflows for a repo that follows these conventions.
 ---
 
 # GitHub Actions conventions
@@ -42,6 +42,22 @@ conventions here are the model-independent core.
    `fetch-depth: 0` only where history is actually diffed.
 10. **Validate workflow YAML** wherever a workflow merges PRs
     automatically, before merging.
+11. **Bot commits touching gated paths pass a gate before main.**
+    GITHUB_TOKEN pushes suppress `push` events but not delivery (the
+    COPR webhook fires on token pushes; workflow_run wiring fires
+    too) — a direct bot push skips every GitHub-side gate and reaches
+    the builder first. Either open the PR with a workflow-triggering
+    credential, or run the gate inside the bumper job on its branch
+    and merge that exact SHA (dependency-bump's gate-in-job mode);
+    the merge waits on the gate — a merger that outruns checks
+    recreates the red. Direct pushes remain for commits no gate
+    observes (rule 6's chore condition). Reds: three direct
+    autoupdate bumps shipped broken to the builders in the packaging
+    repos (dead upstream asset ytm-player 2.2.0, opensuse; rea-agents
+    6.9.0 failing %check, fedora; pdfcraft 0.21.x vendoring breaking
+    at SRPM time, fedora) — the first two observable by validate,
+    which never ran — and a bump PR merged with validate red because
+    the merger didn't wait on checks.
 
 ## Naming and responsibilities
 

@@ -48,7 +48,7 @@ not a better argument.
   mode (symptom, count), never package/repo/incident names — project
   names appear only as validated-example provenance. Red: reds naming
   specific packages/repos read as gossip once the incident is
-  forgotten; a repo-wide sweep was needed to strip them (Nov 2026).
+  forgotten.
 
 ## Structure
 

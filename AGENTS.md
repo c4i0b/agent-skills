@@ -50,7 +50,8 @@ not a better argument.
 
 Per category (the rules above define the categories):
 
-- foundations: agent-docs, readme-shape, writing-style
+- foundations: agent-docs, readme-shape, writing-style,
+  gh-actions-conventions
 - dev-discipline: testing-structure, development-policy,
   dependency-bump, release, distribution-channels
 - agent-workflow: agent-orchestration, planning

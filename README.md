@@ -12,6 +12,7 @@ skills/
     agent-docs/              # lean AGENTS.md ⇄ docs/ (+ references/)
     readme-shape/            # README for humans (+ references/ per repo kind)
     writing-style/           # the prose voice for repo artifacts
+    gh-actions-conventions/  # the shared workflow conventions (+ reds)
   dev-discipline/            # how code is written and tested
     testing-structure/       # pyramid, cheapest-first, recorded fixtures
     development-policy/      # test-first discipline, seeded into repos

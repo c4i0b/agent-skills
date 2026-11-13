@@ -7,8 +7,8 @@ description: Guided planning with the user before non-trivial builds or migratio
 
 The failure this skill exists to prevent: the user knows the destination
 but not the paths, and the agent either builds the wrong thing or makes
-the user drag decisions out of it one by one (observed: the finance
-planning sessions, where the flow had to be taught by hand mid-session).
+the user drag decisions out of it one by one (observed: planning
+sessions, where the flow had to be taught by hand mid-session).
 
 ## When
 

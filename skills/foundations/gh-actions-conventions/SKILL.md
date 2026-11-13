@@ -52,10 +52,10 @@ conventions here are the model-independent core.
     the merge waits on the gate — a merger that outruns checks
     recreates the red. Direct pushes remain for commits no gate
     observes (rule 6's chore condition). Reds: three direct
-    autoupdate bumps shipped broken to the builders in the packaging
-    repos (dead upstream asset ytm-player 2.2.0, opensuse; rea-agents
-    6.9.0 failing %check, fedora; pdfcraft 0.21.x vendoring breaking
-    at SRPM time, fedora) — the first two observable by validate,
+    autoupdate bumps shipped broken to the builders across two
+    packaging repos (dead upstream asset; a version failing %check on its
+    declared runtime; vendoring breaking at SRPM time) — the first two
+    observable by validate,
     which never ran — and a bump PR merged with validate red because
     the merger didn't wait on checks.
 12. **Prefer a prebaked runner image over per-run package installs

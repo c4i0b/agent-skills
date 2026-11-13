@@ -56,7 +56,7 @@ tooling (a spec repo needs none of this).
      not verification. For numeric kernels derive the oracle through an
      independent path: apply the inverse operation (forward-chain from
      returns to test a reverse-chain from prices), or feed recorded real
-     data and compare by key. Red: finance quant kernel bridging synthetic
+     data and compare by key. Red: a quant kernel bridging synthetic
      bars with the wrong proxy return; the hand-computed literal used the
      same wrong date convention as the code, its comment narrating the bug
      as intended behavior.
@@ -69,7 +69,7 @@ tooling (a spec repo needs none of this).
    composition joins). If the series has a downstream consumer, one test
    consumes it as the consumer does (compare by key against the series'
    own inputs) — that is a distinct behavior from the transform's math,
-   not overlap under rule 2. Red: an entire finance suite green under a
+   not overlap under rule 2. Red: an entire suite green under a
    one-day relabeling of returns; the covariance consumer silently
    misaligned by one trading day against the rest of the universe.
 7. **Repo consumes external APIs?** Read

@@ -14,7 +14,7 @@ work on it.
 1. Intro (2-3 short paragraphs): what the repo is and its current state.
 
 Good: "Market data and portfolio analytics stack, run with podman compose.
-Phase 1 is live: yfinance-service serves deterministic daily EOD history."
+Phase 1 is live: the EOD-history service serves deterministic daily closes."
 Bad: "This project is a revolutionary solution that leverages cutting-edge
 technology to empower users in the financial domain." (No information, no
 state, no shape.)

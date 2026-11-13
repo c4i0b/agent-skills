@@ -5,7 +5,7 @@ needs at runtime ships in its image or in named volumes; nothing may
 come from the developer's session (environment variables, engine
 quirks, local image names, the repository checkout, the host's network
 position). Every rule below was found the hard way: one real failed
-deploy per leak, all in one media-stack repo. The producer's green is
+deploy per leak. The producer's green is
 not the consumer's green — not just whose parser, but whose boot.
 
 Companion to [multi-service.md](multi-service.md): the split defines
@@ -82,7 +82,7 @@ what may differ; this contract defines what must not.
   networking is an engine-specific optimization that stays in the dev
   variant, with the engine quirk it works around documented there (red:
   host-network traffic terminates ON the host, so its firewall filtered
-  the WebUI, while published bridge ports ride the engine's DNAT
+  the web UI, while published bridge ports ride the engine's DNAT
   untouched — same file, opposite reachability per service).
 - Reach services by env-overridable URL, never a hardcoded localhost:
   the dev runner sits on the host network; a bridge-network production

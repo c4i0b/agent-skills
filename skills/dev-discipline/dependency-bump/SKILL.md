@@ -15,7 +15,7 @@ Why this exists (observed red): an EOL image tag once shipped unnoticed
 (the failure `tests/scaffold-check.sh` now asserts against), and dependency
 age is a certain recurrence in every repo. Renovate-style autoupdate is
 rejected (DECISIONS.md), so the bump surface we own is one stdlib script.
-Field reds from the finance repo: tag drift hidden behind `ARG
+Field reds: tag drift hidden behind `ARG
 BASE_IMAGE=ref:tag` indirection (the scanner must read ARG lines, not
 just FROM), digest pins parsing the sha hex as a tag, and `uv lock
 --upgrade` rewriting a lockfile's content-hash with zero version moves

@@ -58,26 +58,28 @@ conventions here are the model-independent core.
     at SRPM time, fedora) — the first two observable by validate,
     which never ran — and a bump PR merged with validate red because
     the merger didn't wait on checks.
-12. **Prefer a prebaked runner image over per-run installs when the
-    install window varies.** Judge on variance, not just minutes: a
-    mirror-slow install destabilizes the timeout bound (rule 3 sizes
-    it for hangs, not for install luck), and a published image also
-    removes the keep-two-package-lists-in-sync trap by construction.
-    The image is built once and pulled many times, so it lands
-    BEFORE any consumer references it (two-phase: publish, then
-    reference — near-miss, caught at plan time). Staleness is its
-    default state: a rebuild trigger belongs in the same change that
-    introduces the image (no red yet — candidate until one lands).
-    Red: a 19–75 s dnf window (~3x mirror variance) made runs flaky
-    and timeout sizing guesswork.
-13. **A job `container:` pull carries no GITHUB_TOKEN.** A private
-    registry image needs explicit job auth; public avoids it — but
-    first-time visibility of a user-owned package cannot be set via
-    the API with GITHUB_TOKEN: one manual step remains. Red: the
-    push succeeded with `packages: write`, the job pull failed
-    unauthenticated, and the API visibility call failed — the
-    bootstrap ends with a documented manual step, not a fully
-    automated one.
+12. **Prefer a prebaked runner image over per-run package installs
+    when the install window varies.** Judge on variance, not just
+    minutes: a slow mirror destabilizes the timeout bound (rule 3
+    sizes it for hangs, not for install luck), and a published image
+    also removes the keep-two-package-lists-in-sync trap (CI no
+    longer re-derives the environment) by construction. The image is
+    built once and pulled many times, so it lands BEFORE any
+    consumer references it (two-phase: publish, then reference —
+    near-miss, caught at plan time). Staleness is its default state:
+    a rebuild trigger belongs in the same change that introduces the
+    image (no red yet — candidate until one lands). Red: a 19–75 s
+    install window with ~3x mirror variance made runs flaky and
+    timeout sizing guesswork.
+13. **The job's image pull does not carry the CI token.** A private
+    registry image needs explicit auth in the job; a public one
+    avoids it — but a first-publish visibility change may be denied
+    to the CI token even when the push itself succeeded (ownership
+    rules differ from write permission): the bootstrap then ends
+    with one documented manual step, not a fully automated one.
+    Red: the image push succeeded with the write-scoped CI token,
+    the job pull failed unauthenticated, and the visibility API
+    call failed on the same token.
 
 ## Naming and responsibilities
 

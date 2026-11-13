@@ -1,6 +1,6 @@
 ---
 name: gh-actions-conventions
-description: GitHub Actions conventions for repos in this family. Pinned action SHAs, bash-invoked scripts, concurrency groups, the push-retry dance, [skip ci] semantics, GITHUB_TOKEN event suppression escape hatches, gate-before-main for bot commits on gated paths, job time bounds, workflow naming by pipeline role, and the bash-vs-python script split. Use when writing or reviewing workflows for a repo that follows these conventions.
+description: GitHub Actions conventions for repos in this family. Pinned action SHAs, bash-invoked scripts, concurrency groups, the push-retry dance, [skip ci] semantics, GITHUB_TOKEN event suppression escape hatches, gate-before-main for bot commits on gated paths, job time bounds, prebaked runner images vs per-run installs, registry image auth/visibility, workflow naming by pipeline role, and the bash-vs-python script split. Use when writing or reviewing workflows for a repo that follows these conventions.
 ---
 
 # GitHub Actions conventions
@@ -58,6 +58,26 @@ conventions here are the model-independent core.
     at SRPM time, fedora) — the first two observable by validate,
     which never ran — and a bump PR merged with validate red because
     the merger didn't wait on checks.
+12. **Prefer a prebaked runner image over per-run installs when the
+    install window varies.** Judge on variance, not just minutes: a
+    mirror-slow install destabilizes the timeout bound (rule 3 sizes
+    it for hangs, not for install luck), and a published image also
+    removes the keep-two-package-lists-in-sync trap by construction.
+    The image is built once and pulled many times, so it lands
+    BEFORE any consumer references it (two-phase: publish, then
+    reference — near-miss, caught at plan time). Staleness is its
+    default state: a rebuild trigger belongs in the same change that
+    introduces the image (no red yet — candidate until one lands).
+    Red: a 19–75 s dnf window (~3x mirror variance) made runs flaky
+    and timeout sizing guesswork.
+13. **A job `container:` pull carries no GITHUB_TOKEN.** A private
+    registry image needs explicit job auth; public avoids it — but
+    first-time visibility of a user-owned package cannot be set via
+    the API with GITHUB_TOKEN: one manual step remains. Red: the
+    push succeeded with `packages: write`, the job pull failed
+    unauthenticated, and the API visibility call failed — the
+    bootstrap ends with a documented manual step, not a fully
+    automated one.
 
 ## Naming and responsibilities
 

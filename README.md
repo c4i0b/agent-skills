@@ -72,3 +72,9 @@ Built only when a real validated example exists:
 - distribution-channels references for further ecosystems (deb/rpm,
   flatpak, app stores) — ship when a real repo ships there
 - a drift-review flow (does this repo still follow the model?)
+- **CI runner-image rules** (rebuild cadence for a baked registry
+  image — it rots invisibly without one; the base major as stated
+  policy in the file, humans owning the major while automation owns
+  content freshness) — waiting on a staleness red and a second repo;
+  the red-backed parts (variance-driven prebake, ordering, registry
+  auth/visibility) already live in gh-actions-conventions

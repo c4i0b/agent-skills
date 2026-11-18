@@ -71,6 +71,25 @@ conventions here are the model-independent core.
     image (no red yet — candidate until one lands). Red: a 19–75 s
     install window with ~3x mirror variance made runs flaky and
     timeout sizing guesswork.
+14. **Size scheduled-slot counts and placement from measured yield,
+    not even spacing.** High-frequency crons on shared GitHub
+    infrastructure get dropped or delayed (a 6x/day schedule across
+    two sibling repos observed only 2–3 effective runs/day with up to
+    3 h jitter, identically in both — platform queueing, not repo
+    config). To pick slots: pull ~90 days of scheduled runs plus the
+    bot's action commits, assign each commit to the run that produced
+    it, bucket yield per intended slot, and EXCLUDE catch-up runs
+    (gap since the previous run larger than one nominal interval —
+    their yield measures the gap, not the slot). Place the surviving
+    slots just after the observed upstream-activity clusters, and
+    prefer fewer slots that actually fire over dense spacing that
+    lands on dead windows. Red: even 4-hourly spacing put a slot at
+    13:23 UTC that NEVER fired on time and sat in a release dead
+    zone, while the 01:23 slot (right after the 19:00–00:00 UTC
+    cluster) yielded 3.3 bumps/run and 21:23 yielded 2.65. Chosen
+    shape: autoupdate `23 1,9,17 * * *`, badges `41 3,11,19` (2 h
+    behind each autoupdate so refreshes see the previous scan's
+    builds resolved).
 13. **The job's image pull does not carry the CI token.** A private
     registry image needs explicit auth in the job; a public one
     avoids it — but a first-publish visibility change may be denied
